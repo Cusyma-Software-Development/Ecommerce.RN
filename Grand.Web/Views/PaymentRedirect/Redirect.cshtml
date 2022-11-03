@@ -1,0 +1,25 @@
+﻿@model string
+@{
+    Layout = null;
+    string URL = @T("PlatformRedirect.RedirectURL") + "" + Model;
+}
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@3.1.9-1/crypto-js.js"></script>
+</head>
+<script src="~/scripts/jquery-3.3.1.min.js"></script>
+<div class="text-center">
+    <h4>Redirecting you to the payment gateway</h4>
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Please don't press <strong>Back</strong> or <strong>Close</strong> this page.</span>
+    </div>
+    <form id="paynamics-form" name="form1" method="post" hidden action="@URL">
+        <input type="text" name="paymentrequest" id="paymentrequest">
+        <input type="submit">
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#paynamics-form").submit();
+    });
+</script>

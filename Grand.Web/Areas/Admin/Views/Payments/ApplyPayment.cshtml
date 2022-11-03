@@ -1,0 +1,152 @@
+﻿@model PaymentApplicationModel
+@inject AdminAreaSettings adminAreaSettings
+@{
+    //page title
+    ViewBag.Title = "Add Payment";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel light form-fit">
+            <div class="x_title">
+                <div class="caption">
+                    <i class="icon-dollar-sign"></i>
+                    Apply Payment - @Model.order.OrderNumber
+                    <small>
+                        <i class="fa fa-arrow-circle-left"></i>
+                        <a href="">back to order details</a>
+                    </small>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-horizontal">
+                        <div class="form-body">
+                            <div class="form-group">
+                                <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Order Number</strong></label>
+                                <div class="col-xs-12 col-md-9 col-sm-12">
+                                    <label class="control-label">
+                                        @Model.order.OrderNumber
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Order GUID</strong></label>
+                                <div class="col-xs-12 col-md-9 col-sm-12">
+                                    <label class="control-label">
+                                        @Model.order.OrderGuid
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Order Amount</strong></label>
+                                <div class="col-xs-12 col-md-9 col-sm-12">
+                                    <label class="control-label">
+                                        @Model.formattedOrderAmount
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Amount Paid</strong></label>
+                                <div class="col-xs-12 col-md-9 col-sm-12">
+                                    <label class="control-label">
+                                        @Model.formattedAmountPaid
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-3 col-md-3 col-sm-12" for="CurrencyCode"><strong>Remaining Balance</strong></label>
+                                <div class="col-xs-12 col-md-9 col-sm-12">
+                                    <label class="control-label">
+                                        @Model.formattedBalance
+                                    </label>
+                                </div>
+                            </div>
+                            <hr />
+                            <div asp-validation-summary="All"></div>
+                            <form asp-action="ApplyPayment" asp-route-model="@Model" asp-controller="Payments" asp-route-orderGuid="@Model.order.OrderGuid" asp-route-id="@Model.order.Id" asp-route-orderId="@Model.order.OrderNumber">
+                                <div class="form-group ">
+                                    <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Payment Method</strong></label>
+                                    <div class="col-xs-12 col-md-9 col-sm-12">
+                                        <select class="form-control k-input" id="paymentMethod" name="paymentMethod">
+                                            @foreach (string paymentType in Model.paymentTypes)
+                                            {
+                                                <option>@paymentType</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">-
+                                    <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Payment Amount</strong></label>
+                                    <div class="col-xs-12 col-md-9 col-sm-12">
+                                        <input id="paymentAmount" name="paymentAmount" type="number" class="form-control k-input" value="0.00" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Reference Number</strong></label>
+                                    <div class="col-xs-12 col-md-9 col-sm-12">
+                                        <input id="referenceNumber" name="referenceNumber" type="text" class="form-control k-input" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Remarks</strong></label>
+                                    <div class="col-xs-12 col-md-9 col-sm-12">
+                                        <input id="remarks" name="remarks" type="text" class="form-control k-input" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"><strong>Attachment</strong></label>
+                                    <div class="col-xs-12 col-md-9 col-sm-12">
+                                        <input id="attachmentFile" name="attachmentFile" type="file" class="form-control k-input" onchange="attachmentChanged()" />
+                                        <input id="attachment" name="attachment" type="hidden" class="form-control k-input" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-12 col-md-3 col-sm-12" for="CurrencyCode"></label>
+                                    <div class="col-xs-12 col-md-9 col-sm-12">
+                                        <button class="btn btn-info" id="applypayment" name="applypayment" type="submit">Apply Payment</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function ApplyPayment() {
+        var data = {
+            orderId: '@Model.order.OrderNumber',
+            orderGuid: '@Model.order.OrderGuid',
+            paymentMethod: document.getElementById('ddPaymentMethod').value,
+            amount: document.getElementById('txtAmount').value
+        }
+        
+        var url = '@Html.Raw(@Url.Action("ApplyPaymentToOrder", "Payments"))'
+        $.ajax({
+            method: 'POST',
+            url: url,
+            data : data
+        }).done(function (data, statusText, xhdr) {
+        
+        }).fail(function (xhdr, statusText, errorText) {
+           
+        })
+    }
+
+    function attachmentChanged() {
+        var file = $("#attachmentFile")[0].files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                document.getElementById("attachment").value = e.target.result
+            };
+        }
+    }
+</script>

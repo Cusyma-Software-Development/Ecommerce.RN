@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="06/30/2020 14:15:45" ReportInfo.Modified="10/09/2020 17:29:09" ReportInfo.CreatorVersion="2020.1.6.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="OrderList" ReferenceName="OrderList" DataType="null" Enabled="true">
+      <Column Name="ItemName" DataType="System.String"/>
+      <Column Name="Attribute" DataType="System.String"/>
+      <Column Name="Quantity" DataType="System.Int32"/>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="160.65" Guides="37.8,37.8,37.8,37.8">
+      <TextObject Name="Text15" Left="18.9" Top="66.15" Width="292.95" Height="18.9" Text="ORDER CHECKLIST" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text16" Left="18.9" Top="94.5" Width="292.95" Height="18.9" Text="[Date]" Format="Date" Format.Format="MMMM dd, yyyy" Font="Arial, 10pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="163.32" Width="718.2" Height="28.35" Fill.Color="Gainsboro">
+      <TextObject Name="Text3" Left="18.9" Width="444.15" Height="28.35" Text="ITEM" Padding="5, 5, 5, 5" HorzAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text4" Left="472.5" Width="217.35" Height="28.35" Text="QUANTITY" Padding="5, 5, 5, 5" HorzAlign="Center" Font="Arial, 12pt, style=Bold"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="194.33" Width="718.2" Height="75.6" Border.Lines="All" Border.Style="Dot" CanGrow="true" CanBreak="true" DataSource="OrderList">
+      <TextObject Name="Text1" Left="18.9" Top="18.9" Width="444.15" Height="47.25" CanGrow="true" Text="[OrderList.ItemName]&#13;&#10;[OrderList.Attribute]" VertAlign="Center" Font="Arial, 12pt"/>
+      <TextObject Name="Text2" Left="472.5" Top="18.9" Width="217.35" Height="47.25" CanGrow="true" CanShrink="true" Text="[OrderList.Quantity]" HorzAlign="Center" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="272.6" Width="718.2" Height="132.3">
+      <TextObject Name="Text5" Left="500.85" Top="103.95" Width="207.9" Height="18.9" Text="Page [Page#]" HorzAlign="Right" Font="Arial, 10pt"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

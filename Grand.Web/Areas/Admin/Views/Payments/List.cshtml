@@ -1,0 +1,140 @@
+﻿@model List<Grand.Core.Domain.Payments.PaymentCollections>
+@inject AdminAreaSettings adminAreaSettings
+@{
+    //page title
+    ViewBag.Title = T("Admin.Orders").Text;
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel light form-fit">
+            <div class="x_title">
+                <div class="caption">
+                    <i class="icon-basket"></i>
+                    Payments
+                </div>
+                <div class="actions btn-group btn-group-devided util-btn-margin-bottom-5">
+
+                    <div class="btn-group btn-group-devided">
+                        <a class="btn default" href="javascript:;" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                            <i class="fa fa-download"></i>
+                            Export
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <input type="submit" name="exportxml-all" class="btn default" style="width: 100%;" value="@T("Admin.Common.ExportToXml.All")" />
+                            </li>
+                            <li>
+                                <input type="button" id="exportxml-selected" class="btn default" style="width: 100%;" value="@T("Admin.Common.ExportToXml.Selected")" />
+                            </li>
+                            <li>
+                                <input type="submit" name="exportexcel-all" class="btn default" style="width: 100%;" value="@T("Admin.Common.ExportToExcel.All")" />
+                            </li>
+                            <li>
+                                <input type="button" id="exportexcel-selected" class="btn default" style="width: 100%;" value="@T("Admin.Common.ExportToExcel.Selected")" />
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="row form-horizontal">
+                <div class="form-body">
+                    <form asp-controller="Payments" asp-action="List" method="post">
+                        <div class="form-group col-md-4">
+                            <label class="col-xs-4 col-sm-4 col-md-4 control-label" for="StartDate">Start date<i class="help icon-question" data-container="body" data-placement="top" data-toggle="tooltip" title="" data-original-title="The start date for the search"></i></label>
+                            <div class="col-xs-8 col-md-8 col-sm-8">
+                                <span class="k-widget k-datepicker" style=""><span class="k-picker-wrap k-state-default"><input value="@DateTime.Now.ToShortDateString()" id="dateStart" name="dateStart" value="" data-role="datepicker" type="text" class="k-input" role="combobox" aria-expanded="false" aria-owns="StartDate_dateview" autocomplete="off" aria-disabled="false" style="width: 100%;"><span unselectable="on" class="k-select" aria-label="select" role="button" aria-controls="StartDate_dateview"><span class="k-icon k-i-calendar"></span></span></span></span>
+                                <script>
+                                    $(document).ready(function () {
+                                        $("#dateStart").kendoDatePicker({
+                                            //culture: "en-US"
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="col-xs-4 col-sm-4 col-md-4 control-label" for="EndDate">End date<i class="help icon-question" data-container="body" data-placement="top" data-toggle="tooltip" title="" data-original-title="The end date for the search."></i></label>
+                            <div class="col-xs-8 col-md-8 col-sm-8">
+                                <span class="k-widget k-datepicker" style=""><span class="k-picker-wrap k-state-default"><input value="@DateTime.Now.ToShortDateString()" id="dateEnd" name="dateEnd" value="" data-role="datepicker" type="text" class="k-input" role="combobox" aria-expanded="false" aria-owns="EndDate_dateview" autocomplete="off" aria-disabled="false" style="width: 100%;"><span unselectable="on" class="k-select" aria-label="select" role="button" aria-controls="EndDate_dateview"><span class="k-icon k-i-calendar"></span></span></span></span>
+                                <script>
+                                    $(document).ready(function () {
+                                        $("#dateEnd").kendoDatePicker({
+                                            //culture: "en-US"
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <button class="btn btn-success" type="submit">
+                                <i class="fa fa-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="x_content form">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Payment #</th>
+                                    <th scope="col">Order #</th>
+                                    <th scope="col">Payment Type</th>
+                                    <th scope="col">Date Paid</th>
+                                    <th scope="col">Reference</th>
+                                    <th scope="col">Remarks</th>
+                                    <th scope="col">Attachment</th>
+                                    <th scope="col">Amount Paid</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    @foreach (var item in Model.OrderByDescending(ob => ob.PaymentDate))
+                                    {
+                                        <tr>
+                                            <th scope="row">@item.PaymentId</th>
+                                            <td>@item.OrderNumber</td>
+                                            <td>@item.PaymentType</td>
+                                            <td>@item.PaymentDate.ToString("D")</td>
+                                            <td>@item.Reference</td>
+                                            <td>@item.Remarks</td>
+                                            @if (!String.IsNullOrEmpty(item.Attachment))
+                                            {
+                                                <td><a download="@item.Attachment.Split(":")[1].Split(";")[0]" href="@item.Attachment">Download</a></td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                            <td>@item.AmountPaid</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <th colspan="2">
+                                        <div>Total Payments : <span class="pull-right">@Model.Sum(s => (decimal)s.AmountPaid).ToString()</span></div>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,331 @@
+﻿@model CategoryModel
+@inject SeoSettings seoSettings
+@inject CommonSettings commonSettings
+@{
+    Layout = "_ColumnsG8";
+    Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+
+    var canonicalUrlsEnabled = seoSettings.CanonicalUrlsEnabled;
+    if (canonicalUrlsEnabled)
+    {
+        var categoryUrl = Url.RouteUrl("Category", new { SeName = Model.SeName }, this.Url.ActionContext.HttpContext.Request.Scheme);
+        Html.AddCanonicalUrlParts(categoryUrl);
+    }    
+}
+
+<div class="">
+
+     <center class="headertop mb-5">
+        <img class="headerimg" src="https://aguinaldo.s3.ap-southeast-1.amazonaws.com/g8+logo+png.png" />
+        <br class="d-lg-none d-xl-none" />
+        <span class="headertext text-center g8color">@Model.Name</span>
+        <div class="mb-9 d-lg-none d-xl-none"></div>
+    </center>
+
+
+
+        @if (Model.Products.Any())
+        {
+             @*  @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_filters", additionalData = Model.Id })
+
+        <partial name="_CatalogSelectors" model="Model.PagingFilteringContext" />
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_product_list", additionalData = Model.Id })*@
+
+            if (Model.PagingFilteringContext.ViewMode == "grid")
+            {
+
+                <div class="product-grid col-12 px-0">
+                    <div class="form-row flex-grid">
+                        @foreach (var product in Model.Products)
+                        {
+                            var sub = "<p>Membership</p>";
+                            if (sub.ToUpper() == product.FullDescription.ToUpper())
+                            {
+                                <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                                    <partial name="_ProductBox" model="product" />
+                                </div>
+
+                            }
+
+                        }
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="product-grid">
+                    <div class="col-12">
+                        <div class="row">
+
+                            @foreach (var product in Model.Products)
+                            {
+                                var sub = "<p>Membership</p>";
+                                if (sub.ToUpper() == product.FullDescription.ToUpper())
+                                {
+                                    <partial name="_ProductBoxListDescription" model="product" />
+                                }
+                            }
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+ 
+        <div  style="border-top:1px solid black;" class="pt-5">
+            <div class="row">
+           <div class="col-lg-6">
+                <div class="" style="color:#CCA315 !important;font-size:20px;font-weight:600">
+                    <h3 class="text-center"style="color:#CCA315">
+                        <strong>MEMBER BENEFITS INCLUDE:</strong>
+                     </h3>  
+                     <p class="text-center">
+                        • UNIFORM (JERSEY + SHORTS) <br>
+                        • UP TO 15% OFF VS NON MEMBER PACKAGES <br>
+                        • PACKAGES CONSUMABLE AMONGST SIBLINGS <br>
+                        • NO EXPIRATION OF SESSION CREDITS <br>
+                        • DISCOUNTS AT G8 PARTNER OUTLETS <br>
+                        • PRODUCT GIVEAWAYS FROM SPONSORS 
+                    </p>
+                </div>
+           </div>
+           <div class="col-lg-6">
+                <div class="" style="font-size:20px;font-weight:600">
+                <h3 class="text-center">
+                        <strong>NON MEMBER INFO:</strong>
+                 </h3>  
+                 <p class="text-center">
+                   •  UNIFORM =  ₱1,500 (JERSEY + SHORTS) <br>
+                   • NON CONSUMABLE AMONGST SIBLINGS <br>
+                   • EXPIRES 12 MONTHS AFTER PURCHASE 
+                </p>
+            </div>
+           </div>
+       </div>
+
+    <br />
+    <div class="row">
+        <div class="col-lg-6">
+            @if (Model.Products.Any())
+            {
+                if (Model.PagingFilteringContext.ViewMode == "grid")
+                {
+
+                    <div class="product-grid col-12 px-0">
+                        <div class="form-row flex-grid">
+                            @foreach (var product in Model.Products)
+                            {
+                                 var sub = "<p>Member</p>";
+                                    if (sub.ToUpper() == product.FullDescription.ToUpper())
+                                    {
+                                         <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                                       <partial name="_ProductBox" model="product" />
+                                  
+                                         </div>
+                                  
+                                    }
+                               
+                            }
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="product-grid">
+                        <div class="col-12">
+                            
+                                <h4 class="text-center text-uppercase">Packages</h4>
+                            <div class="row">
+
+                                @foreach (var product in Model.Products)
+                                {
+                                    var sub = "<p>Member</p>";
+                                    if (sub.ToUpper() == product.FullDescription.ToUpper())
+                                    {
+                                        <partial name="_ProductBoxListNameOnly" model="product" />
+                                    }
+                                }
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            }
+        </div>
+        <div class="col-lg-3">
+            @if (Model.Products.Any())
+            {
+                if (Model.PagingFilteringContext.ViewMode == "grid")
+                {
+
+                    <div class="product-grid col-12 px-0">
+                        <div class="form-row flex-grid">
+                            @foreach (var product in Model.Products)
+                            {
+                                  var sub = "<p>Member</p>";
+                                    if (sub.ToUpper() == product.FullDescription.ToUpper())
+                                    {
+                                        <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                                    <partial name="_ProductBox" model="product" />
+                                </div>
+                                    }
+                                
+                            }
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="product-grid">
+                            <div class="col-12"style="color:#CCA315">
+                            <h4 class="text-uppercase text-center">Member</h4>
+                                <div class="row">
+
+                                @foreach (var product in Model.Products)
+                                {
+                                    var sub = "<p>Member</p>";
+                                    if (sub.ToUpper() == product.FullDescription.ToUpper())
+                                    {
+                                        <partial name="_ProductBoxListNoName" model="product" />
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            }
+        </div>
+        <div class="col-lg-3">
+             @if (Model.Products.Any())
+    {
+        if (Model.PagingFilteringContext.ViewMode == "grid")
+        {
+
+            <div class="product-grid col-12 px-0">
+                <div class="form-row flex-grid">
+                    @foreach (var product in Model.Products)
+                    {
+                         var sub = "<p>Non Member</p>";
+                                if (sub.ToUpper() == product.FullDescription.ToUpper())
+                                {
+                                         <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                            <partial name="_ProductBox" model="product" />
+                        </div>
+                                }
+                   
+                    }
+                </div>
+
+               
+            </div>
+        }
+        else
+        {
+            <div class="product-grid">
+                <div class="col-12">
+                      
+                    
+                          <h4 class="text-uppercase text-center">Non Member</h4>
+                    <div class="row">
+                          @foreach (var product in Model.Products)
+                            {
+                                var sub = "<p>Non Member</p>";
+                                if (sub.ToUpper() == product.FullDescription.ToUpper())
+                                {
+                                    <partial name="_ProductBoxListNoName" model="product" />
+                                }
+                            }
+
+                    </div>
+                </div>
+            </div>
+
+        }
+    }
+        </div>
+    </div>
+        </div>
+       
+
+    
+    <br /><br />
+   
+    <div style="border-top:1px solid black;padding-top:60px">
+        @if (Model.Products.Any())
+        {
+
+
+            if (Model.PagingFilteringContext.ViewMode == "grid")
+            {
+
+                <div class="product-grid col-12 px-0">
+                    <div class="form-row flex-grid">
+                        @foreach (var product in Model.Products)
+                        {
+                            var sub = "<p>Others</p>";
+                            if (sub.ToUpper() == product.FullDescription.ToUpper())
+                            {
+                                <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                                    <partial name="_ProductBox" model="product" />
+                                </div>
+                            }
+
+                        }
+                    </div>
+
+
+                </div>
+            }
+            else
+            {
+                <div class="product-grid">
+                    <div class="col-12">
+                        <h4 class="text-center">OTHERS</h4>
+                        <div class="row">
+
+                            @foreach (var product in Model.Products)
+                            {
+                                var sub = "<p>Others</p>";
+                                if (sub.ToUpper() == product.FullDescription.ToUpper())
+                                {
+                                    <partial name="_ProductBoxList" model="product" />
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+
+            }
+        }
+    </div>
+    
+
+</div>
+
+
+
+@section filters
+    {
+    @*filtering*@
+    @if (Model.PagingFilteringContext.PriceRangeFilter.Enabled)
+    {
+        <partial name="_FilterPriceBox" model="Model.PagingFilteringContext.PriceRangeFilter" />
+    }
+    @*filtering*@
+    @if (Model.PagingFilteringContext.SpecificationFilter.Enabled)
+    {
+        <partial name="_FilterSpecsBox" model="Model.PagingFilteringContext.SpecificationFilter" />
+    }
+}

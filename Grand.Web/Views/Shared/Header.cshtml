@@ -1,0 +1,98 @@
+﻿<header role="presentation">
+@*    @await Component.InvokeAsync("Widget", new { widgetZone = "header" })
+    <div class="container">
+        <div class="headBottom d-flex align-items-center d-lg-inline-flex text-lg-left text-center mt-0 mb-0">
+            <a class="js-offcanvas-trigger mobile-menu-trigger d-lg-none d-flex justify-content-center align-content-center mr-3" data-offcanvas-trigger="mobile_menu" href="#mobile_menu">
+                <span class="mdi mdi-menu"></span>
+            </a>
+            <div class="header-logo pr-0 pl-0 mx-lg-0 mx-auto d-inline-flex align-items-center">
+                @await Component.InvokeAsync("Logo")
+            </div>
+            <div class="formSearch ml-lg-auto ml-2 pl-lg-3 pl-0 d-inline-flex align-items-end">
+                @await Component.InvokeAsync("SearchBox")
+            </div>
+            <a class="js-offcanvas-trigger user-panel-trigger d-flex justify-content-center align-content-center ml-lg-3 ml-2" data-offcanvas-trigger="user_panel" href="#user_panel">
+                <span class="mdi mdi-account-outline"></span>
+            </a>
+            @await Component.InvokeAsync("ShoppingCartLinks")
+        </div>
+    </div>
+    <nav class="navbar mainNav navbar-expand-sm offcanvas-desktop">
+        <div class="navbar-collapse container">
+            <ul class="navbar-nav">
+                @await Component.InvokeAsync("TopMenu")
+            </ul>
+        </div>
+    </nav>
+
+                @await Component.InvokeAsync("TopMenuCategory")*@
+
+<div style="background: black">
+    <nav class="navbar navbar-expand-lg  navcontainerweb">
+      
+        <div Class="collapse navbar-collapse"" id="navbarText">
+           
+
+            <ul Class="navbar-nav mr-auto"
+                style="padding-top: 40px">
+                  <a class="navbar-brand" href="@("https://g8academy.com/")">
+                        <img width="100" height="100" style="margin-top: -40px;  margin-right:50px"
+                        src="https://aguinaldo.s3.ap-southeast-1.amazonaws.com/g8logonew.png" />
+                    </a>
+
+                <li class="nav-item ">
+                    <a class="nav-link" href="https://g8academy.com/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://members.g8academy.com/public/weekly-training-schedule">Schedule</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/packages/">Packages</a>
+                </li>
+                    <li class="nav-item d-none">
+                    <a class="nav-link" href="https://g8academy.com/about/">About Us</a>
+                </li>
+                <li class="nav-item d-none">
+                    <a class="nav-link" href="#">Merch</a>
+                </li>
+
+                <li class="nav-item d-none">
+                    <a class="nav-link" href="https://g8academy.com/sponsor-a-player/">Sponsor A Player</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://g8academy.com/gallery/">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://g8academy.com/location">Venues</a>
+                </li>
+                <li class="nav-item d-none">
+                    <a class="nav-link" href="https://g8academy.com/FAQ">FAQ</a>
+                </li>
+                <li class="nav-item d-none">
+                    <a class="nav-link" href="https://g8academy.com/cart/">Cart</a>
+                </li>
+                <li class="nav-item d-none">
+                    <a class="nav-link" href="https://g8academy.com/about-us/">About Us</a>
+                </li>
+             <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                                G8 MEMBERS 
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                             <a class="dropdown-item" href="/login">Login</a>
+                                <a class="dropdown-item" href="https://members.g8academy.com/public/account/freetrial">CREATE ACCOUNT</a>
+                            </div>
+                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://members.g8academy.com/public/account/freetrial-page" style="color:#CCA315">Free Trial</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </nav>
+</div>
+
+
+
+</header>

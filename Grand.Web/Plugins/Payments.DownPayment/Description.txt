@@ -1,0 +1,8 @@
+﻿Group: Payment methods
+FriendlyName: GCash
+SystemName: Payments.DownPayment
+Version: 1.0
+SupportedVersions: 4.70
+Author: Gerard Lardizabal
+DisplayOrder: 1
+FileName: Grand.Plugin.Payments.DownPayment.dll

@@ -1,0 +1,73 @@
+﻿@model TopMenuModel
+@await Component.InvokeAsync("Widget", new { widgetZone = "header_menu_before" })
+@{
+    
+}
+@if (Model.DisplayHomePageMenu)
+{
+    @*<li class="nav-item"></li>*@
+}
+@{
+    int counter = 0;
+    var rootCategories = Model.Categories.ToList();
+    List<List<CategorySimpleModel>> categoryListing = new List<List<CategorySimpleModel>>();
+    int categoryCounter = 0;
+    List<CategorySimpleModel> tempCategories = new List<CategorySimpleModel>();
+    int categoryCount = rootCategories.Count;
+    foreach (var category in rootCategories)
+    {
+        if (categoryCounter > 5)
+        {
+            categoryListing.Add(tempCategories);
+            tempCategories = new List<CategorySimpleModel>();
+            categoryCounter = 0;
+        }
+        tempCategories.Add(category);
+        categoryCounter += 1;
+        categoryCount -= 1;
+        if(categoryCount == 0)
+        {
+            categoryListing.Add(tempCategories);
+        }
+    }
+}
+
+
+
+@foreach (var categoryList in categoryListing)
+{
+    <nav class="navbar navbar-expand-sm p-0 d-none d-sm-none d-md-block">
+        <div class="navbar-collapse container">
+            <ul class="navbar-nav align-center">
+                @foreach (var category in categoryList)
+                {
+                    var categoryLineModel = new TopMenuModel.CategoryLineModel
+                    {
+                        Category = category
+                    };
+                    <partial name="_CategoryLine.TopMenuCategory" model="categoryLineModel" />
+                }
+            </ul>
+        </div>
+    </nav>
+
+}
+
+
+
+@*@foreach (var category in rootCategories)
+    {
+        <nav class="navbar  navbar-expand-sm">
+            <div class="navbar-collapse container">
+                <ul class="navbar-nav align-center">
+                </ul>
+            </div>
+        </nav>
+        var categoryLineModel = new TopMenuModel.CategoryLineModel
+        {
+            Category = category
+        };
+        <partial name="_CategoryLine.TopMenuCategory" model="categoryLineModel" />
+
+    }*@
+

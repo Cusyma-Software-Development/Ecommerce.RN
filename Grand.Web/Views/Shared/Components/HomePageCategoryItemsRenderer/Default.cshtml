@@ -1,0 +1,16 @@
+﻿@model IList<CategoryModel>
+@inject DisplayOrderHomePage order
+@foreach (var item in Model)
+{
+    <div class="product-grid bestsellers order-@order.HomePageBestSellers">
+        <div class="pos_title">
+            <h2 class="generalTitle text-center">@item.Name</h2>
+        </div>
+        <div class="col-12 px-0">
+            <div class="form-row">
+                @await Component.InvokeAsync("HomePageCategoryItems", new { categoryId = item.Id.ToString() })
+            </div>
+        </div>
+    </div>
+}
+                

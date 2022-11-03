@@ -1,0 +1,44 @@
+﻿@model Grand.Web.Models.Knowledgebase.KnowledgebaseHomePageModel
+
+@if (Model.Categories.Any())
+{
+    int currentnumber = 0;
+    <div id="accordion" style="padding-top:20px;">
+        @foreach (var category in Model.Categories)
+        {
+            string currentName = "collapse" + currentnumber;
+            <div class="card">
+                <div class="card-header">
+                    <a class="card-link text-black-50" data-toggle="collapse" href="#@currentName">
+                        <h5>@category.Name</h5>
+                    </a>
+                </div>
+                <div id="@currentName" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        @Html.Raw(category.Description)
+                    </div>
+                </div>
+            </div>
+            currentnumber += 1;
+        }
+    </div>
+    @*<div id="accordion">
+            @foreach (var category in Model.Categories)
+            {
+                <div class="card">
+                    <div class="card-header" id="header-@category.Id">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#@category.Id" aria-expanded="false" aria-controls="@category.Id">
+                                @category.Name
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="@category.Id" class="collapse" aria-labelledby="header-@category.Id" data-parent="#accordion">
+                        <div class="card-body">
+                            @category.Description
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>*@
+}
