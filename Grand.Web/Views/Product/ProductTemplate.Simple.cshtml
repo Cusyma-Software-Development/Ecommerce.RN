@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Http.Extensions
 @inject SeoSettings seoSettings
 @{
-    Layout = "_ColumnsOne";
+    Layout = "_ColumnsG8";
 
     //title, meta
     Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
@@ -40,11 +40,11 @@
     }
 }
 <!--product breadcrumb-->
+<div class="container">
 @section Breadcrumb
 {
     <partial name="_ProductBreadcrumb" model="Model.Breadcrumb" />
 }
-
 @await Component.InvokeAsync("Widget", new { widgetZone = "productdetails_after_breadcrumb", additionalData = Model.Id })
 <div class="page product-details-page product-standard">
     @await Component.InvokeAsync("Widget", new { widgetZone = "productdetails_top", additionalData = Model.Id })
@@ -254,6 +254,8 @@
     </form>
     @await Component.InvokeAsync("Widget", new { widgetZone = "productdetails_bottom", additionalData = Model.Id })
 </div>
+</div>
+
 <script asp-location="Footer">
     $('.product-simple-share .btn').tooltip({
         boundary: 'window',

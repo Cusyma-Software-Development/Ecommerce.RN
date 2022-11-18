@@ -1,7 +1,7 @@
 ﻿@font-face {
     font-family: 'Replica Mono';
     src: url("../fonts/lineto-replicamono-regular.otf");
-    src: local("Lato"), local("Lato-Regular"), url("../fonts/lineto-replicamono-regular.otf") format("truetype") !;
+    src: local("Lato"), local("Lato-Regular"), url("../fonts/lineto-replicamono-regular.otf") format("truetype");
     font-weight: normal;
     font-style: normal;
 }
@@ -23,11 +23,11 @@
 }
 
 body {
-    font-family: Replica Mono;
+    font-family: Replica Mono !important;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-    font-family: Replica Mono;
+    font-family: Replica Mono !important;
 }
 
 .pt-55 {
@@ -460,7 +460,7 @@ footer a {
     font-weight: 400;
     margin-bottom: 25px;
     text-transform: uppercase;
-    font-size: 39px;
+    font-size: 45px !important;
 }
 
 .paragraph1 {
@@ -478,7 +478,7 @@ footer a {
 .text-light {
     color: white;
     font-family: "Replica Mono", Sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 25px;
 }
 
@@ -489,7 +489,7 @@ footer a {
 .g8button {
     padding: 10px 15px;
     background: black;
-    color: #FFCB1B;
+    color: #FFCB1B !important;
 }
 
 .g8buttonred {
@@ -525,6 +525,7 @@ footer a {
 
 .mud-dialog .mud-dialog-title {
     background: #FFCB1B;
+    color:black;
 }
 
     .mud-dialog .mud-dialog-title h6 {
@@ -710,7 +711,7 @@ footer a {
     }
 
     .headertext {
-        font-size: 25px;
+        font-size: 45px !important;
     }
 
     .navbar-nav .nav-link {
@@ -798,6 +799,7 @@ footer a {
 
 .mud-theme-primary {
     background: #FFCB1B !important;
+    color: black;
 }
 
 .mud-primary-text {
@@ -1003,3 +1005,146 @@ footer{
         transform: translate(-50%);
     }
 */
+
+a{
+    color:black
+}
+
+
+.desktopFooter {
+    content-visibility: visible;
+}
+
+.mobileFooter {
+    content-visibility: hidden;
+}
+
+.desktopNav {
+    content-visibility: visible;
+}
+
+.mobileNav {
+    content-visibility: hidden;
+}
+
+.desktopPackage {
+    content-visibility: visible;
+}
+
+
+.mobilePackage {
+    content-visibility: hidden;
+}
+
+
+.home1 {
+    padding: 130px 50px;
+}
+
+.desktophome {
+    content-visibility: visible;
+}
+
+.mobilehome {
+    content-visibility: hidden;
+}
+
+.aboutimage {
+    padding: 300px 30px !important;
+}
+
+.abouttext {
+    text-align: justify !important;
+}
+
+@media (max-width: 1306px) {
+    .desktopNav {
+        content-visibility: hidden;
+    }
+
+    .mobileNav {
+        content-visibility: visible;
+    }
+    .abouttext {
+        text-align: center !important;
+    }
+
+    .desktopPackage {
+        content-visibility: hidden;
+    }
+
+    .mobilePackage {
+        content-visibility: visible;
+    }
+
+
+}
+
+@media (max-width: 576px) {
+    .desktopFooter {
+        content-visibility: hidden;
+    }
+
+    .mobileFooter {
+        content-visibility: visible;
+    }
+
+    .headerimg {
+        display: none;
+    }
+
+    .headertop {
+        margin-top: -5px;
+    }
+
+    .cartpadding {
+        width: 95%;
+    }
+
+    .home1 {
+        padding: 50px;
+    }
+
+    .homepage1 {
+        text-align: center;
+        font-size: 35px;
+        font-weight: 700;
+        letter-spacing: .2em;
+        line-height: 35px;
+    }
+
+    .homepage2 {
+        font-family: Helveticaneue, sans-serif;
+        font-size: 24px;
+        font-weight: 300;
+        text-align: center;
+        line-height: 30.6px;
+    }
+
+    .homefont2 {
+        font-family: Helveticaneue, sans-serif;
+    }
+
+    .desktophome {
+        content-visibility: hidden;
+    }
+
+    .mobilehome {
+        content-visibility: visible ;
+    }
+
+    .container {
+        width: 90%
+    }
+
+    .aboutimage {
+        padding: 180px 30px !important;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+
+}
+

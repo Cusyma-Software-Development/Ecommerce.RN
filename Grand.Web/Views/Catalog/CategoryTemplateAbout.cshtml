@@ -1,0 +1,139 @@
+﻿@model CategoryModel
+@inject SeoSettings seoSettings
+@inject CommonSettings commonSettings
+@{
+    Layout = "_ColumnsG8";
+    Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+
+    var canonicalUrlsEnabled = seoSettings.CanonicalUrlsEnabled;
+    if (canonicalUrlsEnabled)
+    {
+        var categoryUrl = Url.RouteUrl("Category", new { SeName = Model.SeName }, this.Url.ActionContext.HttpContext.Request.Scheme);
+        Html.AddCanonicalUrlParts(categoryUrl);
+    }
+}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/css/lightbox.min.css">
+</head>
+
+<div class="elementor-shape elementor-shape-top" data-negative="false">
+    <svg style="transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2600 131.1"
+         preserveAspectRatio="none">
+        <path style="fill:#FFCB1B" class="elementor-shape-fill" d="M0 0L2600 0 2600 69.1 0 0z"></path>
+        <path class="elementor-shape-fill" style="opacity:0.5;fill:#FFCB1B" d="M0 0L2600 0 2600 69.1 0 69.1z"></path>
+        <path class="elementor-shape-fill" style="opacity:0.25;fill:#FFCB1B" d="M2600 0L0 0 0 130.1 2600 69.1z"></path>
+    </svg>
+</div>
+
+<div class="content">
+
+    <div class="text-center mt-4 mb-5 headertext">
+
+        <span class="g8color">@Model.Name</span>
+
+    </div>
+
+    <div class="container">
+        <div class="col-12">
+
+            <div class="row">
+                <div class="col-lg-6 aboutimage" style="background: url('https://aguinaldo.s3.ap-southeast-1.amazonaws.com/Risenation/about1.jpg'); background-size:cover;background-position:center">
+                </div>
+                <div class="col-lg-6 aboutimage" style="background: url('https://aguinaldo.s3.ap-southeast-1.amazonaws.com/Risenation/about2.jpg'); background-size:cover;background-position:bottom">
+                </div>
+            </div>
+        </div>
+        <div class="mt-5" style="font-size:19px">
+            <div class="abouttext" style="font-family: 'Lineto replicamono',sans-serif">
+
+                Rise Nation PH is the first vertical climbing cardio studio in the Philippines and the first branch in all of Asia. Jason Walsh, founder and fitness expert, first created Rise in California. Now, we have several studios around the world including parts of America and Australia.
+                <br><br>
+                Versaclimbing helps with posture and spine realignment and engages your whole body that’s high-intensity and all with zero-impact. Plus its party-like light shows and music pushes you to Rise nonstop.
+
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4 mb-5 headertext text-uppercase">
+
+            <span class="g8color">Location</span>
+
+            <div class="mapouter" style="overflow:hidden">
+                <div class="gmap_canvas mt-5"><iframe width="1080" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=Rise%20Nation%20Philippines&t=&z=19&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe></div>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4 mb-5  text-uppercase">
+
+            <span class="g8color headertext">Amenities</span>
+
+            <div class="mt-3">
+                <div class="">
+                    <div class="row">
+                        <div class=col-lg-6>
+                            <span class="" style="font-size:30px">Locker</span>
+                            <img src="https://aguinaldo.s3.ap-southeast-1.amazonaws.com/Risenation/aboutamenities1.jpg" style="width:100%" />
+                        </div>
+                        <div class=col-lg-6>
+                            <span class="" style="font-size:30px">Shower</span>
+                                <img src="https://aguinaldo.s3.ap-southeast-1.amazonaws.com/Risenation/aboutamenities2.jpg" style="width:100%" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="elementor-shape  elementor-shape-bottom" data-negative="false">
+        <svg style="height: 144px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2600 131.1"
+             preserveAspectRatio="none">
+            <path style="fill:#FFCB1B" class="elementor-shape-fill" d="M0 0L2600 0 2600 69.1 0 0z"></path>
+            <path class="elementor-shape-fill" style="opacity:0.5;fill:#FFCB1B" d="M0 0L2600 0 2600 69.1 0 69.1z">
+            </path>
+            <path class="elementor-shape-fill" style="opacity:0.25;fill:#FFCB1B" d="M2600 0L0 0 0 130.1 2600 69.1z">
+            </path>
+        </svg>
+    </div>
+ </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/js/lightbox.min.js"></script>
+
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+    </script>
+
+    @section filters
+        {
+        @*filtering*@
+        @if (Model.PagingFilteringContext.PriceRangeFilter.Enabled)
+        {
+            <partial name="_FilterPriceBox" model="Model.PagingFilteringContext.PriceRangeFilter" />
+        }
+        @*filtering*@
+        @if (Model.PagingFilteringContext.SpecificationFilter.Enabled)
+        {
+            <partial name="_FilterSpecsBox" model="Model.PagingFilteringContext.SpecificationFilter" />
+        }
+    }

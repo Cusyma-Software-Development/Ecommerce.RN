@@ -1,9 +1,13 @@
 ﻿@model ProductDetailsModel.ProductBreadcrumbModel
 @if (Model.Enabled)
 {
+ 
+
     var count = 0;
+           <div class="container">
     <ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
         @await Component.InvokeAsync("Widget", new { widgetZone = "productbreadcrumb_before" })
+
         <li class="breadcrumb-item">
             <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
                 <a href="@Url.RouteUrl("HomePage")" itemprop="url">
@@ -31,5 +35,5 @@
             <meta itemprop="position" content="@(count+1)" />
         </li>
     </ol>
-
+    </div>
 }
