@@ -463,57 +463,46 @@
 
 
 <div class="container mobilePackage">
+    
     <div class="product-box list-box animation lazyload" data-productid="@Model.Id">
+        <div class="row text-center" style="background:#f2f2f2;padding-top:30px;padding-bottom:30px;font-size:15px">
 
-        <div class="picture-container">
-            <a class="picture" href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
-                <picture>
-                    <source media="(max-width: 480px)" picture-id="@Model.DefaultPictureModel.Id" picture-size="300" />
-                    <img class="img-fluid" alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
-                </picture>
-            </a>
-            @if (!string.IsNullOrEmpty(Model.SecondPictureModel.ImageUrl))
-            {
-                <div class="hover-img">
+            @*picture*@
+@*            <div class="col-12">
+                <div class="picture-container">
                     <a class="picture" href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
                         <picture>
-                            <source media="(max-width: 480px)" picture-id="@Model.SecondPictureModel.Id" picture-size="300" />
-                            <img class="img-fluid" alt="@Model.SecondPictureModel.AlternateText" src="@Model.SecondPictureModel.ImageUrl" />
+                            <source picture-id="@Model.DefaultPictureModel.Id" picture-size="300" />
+                            <img class="img-fluid" alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
                         </picture>
                     </a>
+                  
                 </div>
-            }
-        </div>
+            </div>*@
 
-        <div class="labels">
-            @if (!String.IsNullOrEmpty(Model.ProductPrice.OldPrice))
-            {
-                <span class="product-discount badge product-box-label">
-                    <span>-@(Convert.ToInt32((1 - Model.ProductPrice.PriceValue / Model.ProductPrice.OldPriceValue) * 100))%</span>
-                </span>
-            }
-            @if (!string.IsNullOrEmpty(Model.Flag))
-            {
-                <span class="product-box-label badge bg-info">@Model.Flag</span>
-            }
-        </div>
+             <div class="col-12">
+                <div style="height:300px"></div>
+                <img class="img-fluid" alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
+            </div>
 
-        <div class="product-info">
+            <div class="col-12">
+                  <div class="">
 
-            <div class="top">
-                <div class="title">
-                    <h5 class="mb-0">
+                    <h5 class="mt-3" style="font-size:25px">
                         <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })">@Model.Name</a>
                     </h5>
                 </div>
-                <div class="mt-3 mb-3">
+            </div>
+           
+
+            <div class="col-12">
+                <div class="">
                     @Html.Raw(Model.ShortDescription)
                 </div>
 
-                @if (Model.ShowSku && !string.IsNullOrEmpty(Model.Sku))
-                {
-                    <span class="sku">@Model.Sku</span>
-                }
+            </div>
+
+            <div class="col-12">
                 <div class="prices-rating">
                     @if (Model.ReviewOverviewModel.AllowCustomerReviews)
                     {
@@ -529,102 +518,29 @@
                             </div>
                         </div>
                     }
-                    <div class="prices d-inline-flex align-items-center">
+                    <div class="prices d-inline-flex align-items-center" >
                         @if (Model.ProductType != ProductType.Auction)
                         {
-                            <div class="actual-price price">
+                            <div class="actual-price price"  style="font-size:25px">
                                 @Model.ProductPrice.Price
                             </div>
                         }
                         else
                         {
-                            <div class="actual-price price">
+                            <div class="actual-price price"  style="font-size:25px">
                                 @(Model.ProductPrice.HighestBidValue > 0 ? Model.ProductPrice.HighestBid : Model.ProductPrice.StartPrice)
                             </div>
                         }
                         @if (!String.IsNullOrEmpty(Model.ProductPrice.OldPrice))
                         {
-                            <div class="old-price price ml-1">
+                            <div class="old-price price ml-1" style="font-size:25px">
                                 @Model.ProductPrice.OldPrice
                             </div>
                         }
                     </div>
                 </div>
-                @if (Model.ProductPrice.DisplayTaxShippingInfo)
-                {
-                    var inclTax = Model.TaxDisplayType == TaxDisplayType.IncludingTax;
-                    <div class="tax-shipping-info">
-                        @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeName("shippinginfo", Context) }))
-                    </div>
-                }
-                @if (Model.ProductType == ProductType.Auction)
-                {
-                    @if (Model.EndTime.HasValue)
-                    {
-                        <div class="countdown-box text-left p-sm-2 p-1 bg-light">
-                            @if (Model.EndTime > DateTime.UtcNow)
-                            {
-                                <label class="d-inline-block mb-0">@T("AddToCart.Timeleft"): </label>
-                                <div class="d-inline-block" data-countdown="@Model.EndTime.Value.ToString("yyyy-MM-dd HH:mm UTC")"></div>
-                            }
-                            else
-                            {
-                                <div class="d-inline-flex flex-wrap justify-content-center">
-                                    <label class="ended-label">@T("ShoppingCart.Auctionends"):</label>
-                                    <div class="count-date">@Model.EndTimeLocalTime.Value.ToString()</div>
-                                </div>
-                            }
-                        </div>
-                    }
-                }
             </div>
-            <div class="bottom d-md-flex d-none">
-                @if (Model.SpecificationAttributeModels.Any())
-                {
-                    <div class="spec-container">
-                        @{
-                            var group = Model.SpecificationAttributeModels.GroupBy(x => x.SpecificationAttributeName);
-                        }
-                        <table>
-                            <tbody>
-                                @foreach (var item in group)
-                                {
-                                    <tr class="spec">
-                                        <td>
-                                            <div class="spec-name">
-                                                @{
-                                                    var groupList = item.ToList();
-                                                }
-                                                @groupList[0].SpecificationAttributeName:
-                                            </div>
-                                        </td>
-                                        <td>
-                                            @{
-                                                var groupList2 = item.ToList();
-                                            }
-                                            <div class="spec-value">
-                                                @foreach (var spec in groupList)
-                                                {
-                                                    <span>
-                                                        @Html.Raw(spec.ValueRaw)
-                                                    </span>
-                                                }
-                                            </div>
-                                        </td>
-
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-
-
-
-            </div>
-
-
-            <div>
+            <div class="col-12">
                 <div class="buttons btn-group">
                     @if (Model.ShowQty)
                     {
@@ -666,9 +582,10 @@
                 </div>
             </div>
 
-
-
+               
         </div>
+
+        
     </div>
 </div>
 

@@ -1069,13 +1069,7 @@ a{
         text-align: center !important;
     }
 
-    .desktopPackage {
-        content-visibility: hidden;
-    }
-
-    .mobilePackage {
-        content-visibility: visible;
-    }
+  
 
 
 }
@@ -1143,8 +1137,14 @@ a{
 
 }
 
-@media (max-width: 576px) {
+@media (max-width: 1049px) {
+      .desktopPackage {
+        content-visibility: hidden;
+    }
 
+    .mobilePackage {
+        content-visibility: visible;
+    }
 
 }
 
