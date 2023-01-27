@@ -11,6 +11,7 @@ namespace Grand.Web.Models.Customer
     {
         public class RegistrationModel
         {
+            public string username { get; set; }
             public string email { get; set; }
             public string firstName { get; set; }
             public string lastName { get; set; }

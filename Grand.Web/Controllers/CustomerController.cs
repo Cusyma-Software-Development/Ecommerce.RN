@@ -195,6 +195,21 @@ namespace Grand.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginRedirectToPlatform(string reference)
+        {
+            var customer = await _customerService.GetCustomerById(reference);
+            if (customer != null)
+            {
+                //sign in new customer
+                await _authenticationService.SignIn(customer, true);
+                //on success redirect to platform
+                return RedirectPermanent(_localizationService.GetResource("Platform.BaseUrl"));
+            }
+            return RedirectPermanent(_localizationService.GetResource("Platform.LoginUrl"));
+        }
+
         [HttpPost]
         public async Task<IActionResult> TwoFactorAuthorization(string token,
             [FromServices] IShoppingCartService shoppingCartService,
