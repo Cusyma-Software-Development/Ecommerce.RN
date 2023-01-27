@@ -24,5 +24,12 @@ namespace Grand.Web.Models.Checkout
                 public string ItemId { get; set; }
             }
         }
+
+        public class GrandnodeOrderUpdateObject
+        {
+            public string OrderId { get; set; } = "";
+            public string Status { get; set; } = "";
+            public string Remarks { get; set; } = "";
+        }
     }
 }

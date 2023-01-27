@@ -1,4 +1,7 @@
-﻿using Grand.Core;
+﻿using Grand.Api.Commands.Models.Customers;
+using Grand.Api.DTOs.Customers;
+using Grand.Api.Extensions;
+using Grand.Core;
 using Grand.Core.Domain;
 using Grand.Core.Domain.Customers;
 using Grand.Framework.Controllers;
@@ -14,15 +17,18 @@ using Grand.Services.Localization;
 using Grand.Services.Logging;
 using Grand.Services.Messages;
 using Grand.Services.Orders;
+using Grand.Services.Security;
 using Grand.Web.Commands.Models.Customers;
 using Grand.Web.Extensions;
 using Grand.Web.Features.Models.Common;
 using Grand.Web.Features.Models.Customers;
 using Grand.Web.Models.Customer;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,7 +37,7 @@ namespace Grand.Web.Controllers
     public partial class CustomerController : BasePublicController
     {
         #region Fields
-
+        private readonly IEncryptionService _encryptionService;
         private readonly IGrandAuthenticationService _authenticationService;
         private readonly ILocalizationService _localizationService;
         private readonly IWorkContext _workContext;
@@ -63,7 +69,8 @@ namespace Grand.Web.Controllers
             IMediator mediator,
             IWorkflowMessageService workflowMessageService,
             CaptchaSettings captchaSettings,
-            CustomerSettings customerSettings)
+            CustomerSettings customerSettings,
+            IEncryptionService encryptionService)
         {
             _authenticationService = authenticationService;
             _localizationService = localizationService;
@@ -78,6 +85,7 @@ namespace Grand.Web.Controllers
             _workflowMessageService = workflowMessageService;
             _captchaSettings = captchaSettings;
             _mediator = mediator;
+            _encryptionService = encryptionService;
         }
 
         #endregion
@@ -224,6 +232,203 @@ namespace Grand.Web.Controllers
 
             return View();
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> RegisterExternal([FromBody] GenericModel.RegistrationModel model)
+        {
+            GenericModel.Result result = new GenericModel.Result();
+            try
+            {
+                CustomerDto customerDto = new CustomerDto()
+                {
+                    Username = model.email,
+                    Email = model.email,
+                    AdminComment = "Generated from External",
+                    IsTaxExempt = true,
+                    FreeShipping = true,
+                    AffiliateId = "",
+                    VendorId = "",
+                    StoreId = _storeContext.CurrentStore.Id.ToString(),
+                    Active = true,
+                    Deleted = false,
+                    Gender = "",
+                    FirstName = model.firstName,
+                    LastName = model.lastName,
+                    DateOfBirth = DateTime.Now,
+                    Company = "-",
+                    StreetAddress = "-",
+                    StreetAddress2 = "-",
+                    ZipPostalCode = "0",
+                    City = "-",
+                    CountryId = "",
+                    StateProvinceId = "",
+                    Phone = "-",
+                    VatNumber = "",
+                    VatNumberStatusId = "",
+                    Signature = ""
+                };
+
+
+
+                var registeredRole = await _customerService.GetCustomerRoleBySystemName(SystemCustomerRoleNames.Registered);
+                var newUserRole = await _customerService.GetCustomerRoleBySystemName("New User");
+                var customer = customerDto.ToEntity();
+                customer.CreatedOnUtc = DateTime.UtcNow;
+                customer.LastActivityDateUtc = DateTime.UtcNow;
+                customer.CustomerRoles.Add(registeredRole);
+                customer.CustomerRoles.Add(newUserRole);
+
+                var country = await _countryService.GetCountryByTwoLetterIsoCode("PH");
+
+                string saltKey = _encryptionService.CreateSaltKey(5);
+                customer.PasswordFormat = PasswordFormat.Hashed;
+                customer.PasswordSalt = saltKey;
+                customer.Password = _encryptionService.CreatePasswordHash(customer.Password, saltKey, _customerSettings.HashedPasswordFormat);
+
+                AddCustomerAddressCommand addressCommand = new AddCustomerAddressCommand();
+                addressCommand.Address = new AddressDto();
+                addressCommand.Address.Address1 = "";
+                addressCommand.Address.Address2 = "";
+                addressCommand.Address.VatNumber = "";
+                addressCommand.Address.PhoneNumber = "";
+                addressCommand.Address.City = "";
+                addressCommand.Address.Company = "";
+                addressCommand.Address.CreatedOnUtc = DateTime.Now;
+                addressCommand.Address.Email = model.email;
+                addressCommand.Address.FaxNumber = "";
+                addressCommand.Address.ZipPostalCode = "";
+                addressCommand.Address.FirstName = model.firstName;
+                addressCommand.Address.LastName = model.lastName;
+                addressCommand.Address.City = "";
+                addressCommand.Address.CustomAttributes = "";
+                addressCommand.Address.CountryId = country.Id;
+                addressCommand.Address.StateProvinceId = "";
+
+                if (await _customerService.GetCustomerByEmail(customer.Email) != null)
+                {
+                    result = new GenericModel.Result { Message = _localizationService.GetResource("Account.Register.Errors.EmailAlreadyExists"), StatusCode = 500, IsSuccess = false };
+                }
+                else
+                {
+                    await _customerService.InsertCustomer(customer);
+                    var address = addressCommand.Address.ToEntity();
+                    address.CustomerId = customer.Id;
+                    await _customerService.InsertAddress(address);
+                    result = new GenericModel.Result { Message = "User created", StatusCode = 200, IsSuccess = true, ResponseObject = customer.Id.ToString() };
+                }
+            }
+            catch (Exception ex)
+            {
+                result = new GenericModel.Result { Message = ex.ToString(), StatusCode = 500, IsSuccess = false };
+            }
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> RegisterExternalBatch([FromBody] List<GenericModel.RegistrationModel> batch)
+        {
+            GenericModel.Result result = new GenericModel.Result();
+            List<GenericModel.RegisterBatchResult> registerBatchResult = new List<GenericModel.RegisterBatchResult>();
+            try
+            {
+                foreach (var model in batch)
+                {
+                    CustomerDto customerDto = new CustomerDto()
+                    {
+                        Username = model.email,
+                        Email = model.email,
+                        AdminComment = "Generated from External",
+                        IsTaxExempt = true,
+                        FreeShipping = true,
+                        AffiliateId = "",
+                        VendorId = "",
+                        StoreId = _storeContext.CurrentStore.Id.ToString(),
+                        Active = true,
+                        Deleted = false,
+                        Gender = "",
+                        FirstName = model.firstName,
+                        LastName = model.lastName,
+                        DateOfBirth = DateTime.Now,
+                        Company = "-",
+                        StreetAddress = "-",
+                        StreetAddress2 = "-",
+                        ZipPostalCode = "0",
+                        City = "-",
+                        CountryId = "",
+                        StateProvinceId = "",
+                        Phone = "-",
+                        VatNumber = "",
+                        VatNumberStatusId = "",
+                        Signature = ""
+                    };
+
+
+
+                    var registeredRole = await _customerService.GetCustomerRoleBySystemName(SystemCustomerRoleNames.Registered);
+                    var newUserRole = await _customerService.GetCustomerRoleBySystemName("New User");
+
+                    var customer = customerDto.ToEntity();
+                    customer.CreatedOnUtc = DateTime.UtcNow;
+                    customer.LastActivityDateUtc = DateTime.UtcNow;
+                    customer.CustomerRoles.Add(registeredRole);
+                    customer.CustomerRoles.Add(newUserRole);
+
+                    var country = await _countryService.GetCountryByTwoLetterIsoCode("PH");
+
+                    string saltKey = _encryptionService.CreateSaltKey(5);
+                    customer.PasswordFormat = PasswordFormat.Hashed;
+                    customer.PasswordSalt = saltKey;
+                    customer.Password = _encryptionService.CreatePasswordHash(customer.Password, saltKey, _customerSettings.HashedPasswordFormat);
+
+                    AddCustomerAddressCommand addressCommand = new AddCustomerAddressCommand();
+                    addressCommand.Address = new AddressDto();
+                    addressCommand.Address.Address1 = "";
+                    addressCommand.Address.Address2 = "";
+                    addressCommand.Address.VatNumber = "";
+                    addressCommand.Address.PhoneNumber = "";
+                    addressCommand.Address.City = "";
+                    addressCommand.Address.Company = "";
+                    addressCommand.Address.CreatedOnUtc = DateTime.Now;
+                    addressCommand.Address.Email = model.email;
+                    addressCommand.Address.FaxNumber = "";
+                    addressCommand.Address.ZipPostalCode = "";
+                    addressCommand.Address.FirstName = model.firstName;
+                    addressCommand.Address.LastName = model.lastName;
+                    addressCommand.Address.City = "";
+                    addressCommand.Address.CustomAttributes = "";
+                    addressCommand.Address.CountryId = country.Id;
+                    addressCommand.Address.StateProvinceId = "";
+
+                    var existingCustomer = await _customerService.GetCustomerByEmail(customer.Email);
+                    if (existingCustomer != null)
+                    {
+                        registerBatchResult.Add(new GenericModel.RegisterBatchResult { email = customer.Email, id = existingCustomer.Id.ToString() });
+                        //result = new GenericModel.Result { Message = _localizationService.GetResource("Account.Register.Errors.EmailAlreadyExists"), StatusCode = 500, IsSuccess = false };
+                    }
+                    else
+                    {
+                        await _customerService.InsertCustomer(customer);
+                        var address = addressCommand.Address.ToEntity();
+                        address.CustomerId = customer.Id;
+                        await _customerService.InsertAddress(address);
+                        registerBatchResult.Add(new GenericModel.RegisterBatchResult { email = customer.Email, id = customer.Id.ToString() });
+
+                        //result = new GenericModel.Result { Message = "User created", StatusCode = 200, IsSuccess = true, ResponseObject = customer.Id.ToString() };
+                    }
+                }
+
+                result = new GenericModel.Result { Message = "Users created", StatusCode = 200, IsSuccess = true, ResponseObject = Newtonsoft.Json.JsonConvert.SerializeObject(registerBatchResult) };
+            }
+            catch (Exception ex)
+            {
+                result = new GenericModel.Result { Message = ex.ToString(), StatusCode = 500, IsSuccess = false };
+            }
+            return StatusCode(result.StatusCode, result);
+        }
+
+
 
         protected async Task<IActionResult> SignInAction(IShoppingCartService shoppingCartService, Customer customer, string returnUrl = null)
         {
@@ -1278,5 +1483,7 @@ namespace Grand.Web.Controllers
         }
 
         #endregion
+
+
     }
 }

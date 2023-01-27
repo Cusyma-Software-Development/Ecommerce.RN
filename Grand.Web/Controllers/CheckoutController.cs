@@ -48,6 +48,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using static Grand.Web.Models.Checkout.PaynamicsTransactionModel;
 using static Grand.Web.Models.Checkout.PlatformRedirectModel;
+using static Grand.Web.Models.Customer.GenericModel;
 
 namespace Grand.Web.Controllers
 {
@@ -1853,6 +1854,7 @@ namespace Grand.Web.Controllers
                     var base64OrderId = System.Convert.FromBase64String(requestid);
                     string orderId = System.Text.Encoding.UTF8.GetString(base64OrderId);
 
+
                     var base64ResponseId = System.Convert.FromBase64String(responseid);
                     string responseId = System.Text.Encoding.UTF8.GetString(base64ResponseId);
 
@@ -1908,6 +1910,15 @@ namespace Grand.Web.Controllers
                             {
                                 Order tempOrder = await _orderService.GetOrderByNumber(Convert.ToInt32(orderId));
                                 await _mediator.Send(new InsertOrderNoteCommand() { OrderNote = new Models.Orders.AddOrderNoteModel { Note = "Payment Failed : " + errorCode + " - " + errorDescription, OrderId = tempOrder.Id.ToString() }, Language = _workContext.WorkingLanguage });
+
+                                using (HttpClient httpClient = new HttpClient())
+                                {
+                                    GrandnodeOrderUpdateObject updateObject = new GrandnodeOrderUpdateObject() { OrderId = orderId, Status = "Failed", Remarks = "Payment Failed : " + errorCode + " - " + errorDescription };
+                                    var data = JsonConvert.SerializeObject(updateObject);
+                                    var requestContent = new StringContent(data, Encoding.UTF8, "application/json");
+                                    var httpResponse = await httpClient.PostAsync(_localizationService.GetResource("Platform.UpdateOrderUrl"), requestContent);
+                                }
+
                                 return RedirectToAction("FailedPayment", new { orderId = orderId, errorCode = node[1].InnerText.ToUpper() });
                             }
                         }
@@ -1942,6 +1953,22 @@ namespace Grand.Web.Controllers
                                 Remarks = "Paid through Paynamics Gateway",
                                 PaymentType = "Paynamics"
                             });
+
+                            using (HttpClient httpClient = new HttpClient())
+                            {
+                                GrandnodeOrderUpdateObject updateObject = new GrandnodeOrderUpdateObject() { OrderId = orderId, Status = "Paid" };
+                                var data = JsonConvert.SerializeObject(updateObject);
+                                var requestContent = new StringContent(data, Encoding.UTF8, "application/json");
+                                var httpResponse = await httpClient.PostAsync(_localizationService.GetResource("Platform.UpdateOrderUrl"), requestContent);
+                            }
+
+                            //Remove new user role on first order
+                            var customer =await _customerService.GetCustomerById(order.CustomerId);
+                            var customerRoleNewUser = customer.CustomerRoles.Where(w => w.SystemName.ToUpper() == "NEW USER").FirstOrDefault();
+                            if(customerRoleNewUser != null)
+                            {
+                                await _customerService.DeleteCustomerRole(customerRoleNewUser);
+                            }
                             return RedirectToAction("Completed", new { orderId = order.Id.ToString() });
                         }
                     }
@@ -2000,7 +2027,38 @@ namespace Grand.Web.Controllers
             var httpConnectionFeature = HttpContext.Features.Get<IHttpConnectionFeature>();
             var localIpAddress = httpConnectionFeature?.LocalIpAddress;
             PostProcessPaymentRequest orders = new PostProcessPaymentRequest();
+            GrandnodeOrderCreateObject orderCreateObject = new GrandnodeOrderCreateObject();
             var order = await _orderService.GetOrderById(id);
+
+            orderCreateObject.DateCreated = order.CreatedOnUtc;
+            orderCreateObject.UserReferenceId = order.CustomerId;
+            orderCreateObject.Subtotal = order.OrderSubtotalInclTax;
+            orderCreateObject.Discounts = order.OrderDiscount;
+            orderCreateObject.NetTotal = order.OrderTotal;
+            orderCreateObject.OrderId = order.OrderNumber.ToString();
+
+            orderCreateObject.Items = new List<GrandnodeOrderCreateObject.Item>();
+            foreach (var item in order.OrderItems)
+            {
+                Product prod = await _productService.GetProductById(item.ProductId);
+                orderCreateObject.Items.Add(new GrandnodeOrderCreateObject.Item
+                {
+                    ItemId = prod.Id,
+                    ItemName = prod.Name,
+                    Price = item.UnitPriceInclTax,
+                    Quantity = item.Quantity,
+                    Subtotal = item.Quantity * item.UnitPriceInclTax
+                });
+            }
+
+            Result result = new Result();
+            using (HttpClient httpClient = new HttpClient())
+            {
+                var data = JsonConvert.SerializeObject(orderCreateObject);
+                var requestContent = new StringContent(data, Encoding.UTF8, "application/json");
+                var httpResponse = await httpClient.PostAsync(_localizationService.GetResource("Platform.CreateOrderUrl"), requestContent);
+                result = JsonConvert.DeserializeObject<Result>(httpResponse.Content.ReadAsStringAsync().Result);
+            }
 
             orders.Order = order;
             string scheme = _webHelper.GetStoreHost(false);
