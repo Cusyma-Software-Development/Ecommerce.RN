@@ -8,6 +8,7 @@ using Grand.Framework.Kendoui;
 using Grand.Framework.Mvc;
 using Grand.Framework.Mvc.Filters;
 using Grand.Framework.Security.Authorization;
+using Grand.Services.Authentication;
 using Grand.Services.Catalog;
 using Grand.Services.Common;
 using Grand.Services.Customers;
@@ -20,6 +21,7 @@ using Grand.Web.Areas.Admin.Extensions;
 using Grand.Web.Areas.Admin.Interfaces;
 using Grand.Web.Areas.Admin.Models.Catalog;
 using Grand.Web.Areas.Admin.Models.Customers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -52,12 +54,14 @@ namespace Grand.Web.Areas.Admin.Controllers
         private readonly IAddressAttributeService _addressAttributeService;
         private readonly IWorkflowMessageService _workflowMessageService;
         private readonly IDownloadService _downloadService;
+        private readonly IGrandAuthenticationService _authenticationService;
 
         #endregion
 
         #region Constructors
 
         public CustomerController(ICustomerService customerService,
+            IGrandAuthenticationService authenticationService,
             IProductService productService,
             IProductReviewViewModelService productReviewViewModelService,
             IProductViewModelService productViewModelService,
@@ -76,6 +80,7 @@ namespace Grand.Web.Areas.Admin.Controllers
             IDownloadService downloadService)
         {
             _customerService = customerService;
+            _authenticationService = authenticationService;
             _productService = productService;
             _productReviewViewModelService = productReviewViewModelService;
             _productViewModelService = productViewModelService;
@@ -583,6 +588,21 @@ namespace Grand.Web.Areas.Admin.Controllers
             }
 
             return RedirectToAction("Edit", new { id = customer.Id });
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginRedirectToPlatform(string reference)
+        {
+            var customer = await _customerService.GetCustomerById(reference);
+            if (customer != null)
+            {
+                //sign in new customer
+                await _authenticationService.SignIn(customer, true);
+                //on success redirect to platform
+                return RedirectPermanent(_localizationService.GetResource("Platform.BaseUrl"));
+            }
+            return RedirectPermanent(_localizationService.GetResource("Platform.LoginUrl"));
         }
 
         #endregion
