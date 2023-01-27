@@ -38,24 +38,24 @@
                         <tr>
                             @if (Model.IsEditable && Model.IsAllowOnHold)
                             {
-                                <th class="cart text-center"></th>
+                                <th class="cart"></th>
                             }
                             @if (Model.ShowProductImages)
                             {
-                                <th class="product-picture text-center">
+                                <th class="product-picture">
                                     @T("ShoppingCart.Image")
                                 </th>
                             }
-                            <th class="product text-center">
+                            <th class="product">
                                 @T("ShoppingCart.Product(s)")
                             </th>
-                            <th class="unit-price text-center">
+                            <th class="unit-price">
                                 @T("ShoppingCart.UnitPrice")
                             </th>
-                            <th class="quantity text-center">
+                            <th class="quantity">
                                 @T("ShoppingCart.Quantity")
                             </th>
-                            <th class="subtotal text-center">
+                            <th class="subtotal">
                                 @T("ShoppingCart.ItemTotal")
                             </th>
                             @if (Model.IsEditable)

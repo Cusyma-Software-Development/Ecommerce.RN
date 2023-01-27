@@ -126,7 +126,9 @@
                 <span class="sku">@Model.Sku</span>
             }
             <div class="prices-rating">
-                <div class="prices @if (Model.ProductType == ProductType.Reservation) { <text>reservation-price</text> } ">
+                <div class="prices @if (Model.ProductType == ProductType.Reservation) {
+                <text>reservation-price</text>
+ } ">
                     @if (!String.IsNullOrEmpty(Model.ProductPrice.OldPrice))
                     {
                         <div class="old-price price">

@@ -1,7 +1,12 @@
-﻿@model string
+﻿@model Grand.Web.Models.Checkout.PaynamicsTransactionModel.request
 @{
     Layout = null;
-    string URL = @T("PlatformRedirect.RedirectURL") + "" + Model;
+    string orderXML = "";
+    Model.orders.items.ForEach(fe =>
+    {
+        orderXML += "<Items><itemname>" + fe.itemname + "</itemname><quantity>" + fe.quantity + "</quantity><amount>" + String.Format("{0:0.00}", fe.amount) + "</amount></Items>";
+    });
+    string redirectUrl = ViewBag.PaynamicsUrl + "/webpayment/Default.aspx";
 }
 <head>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@3.1.9-1/crypto-js.js"></script>
@@ -12,7 +17,7 @@
     <div class="spinner-border" role="status">
         <span class="sr-only">Please don't press <strong>Back</strong> or <strong>Close</strong> this page.</span>
     </div>
-    <form id="paynamics-form" name="form1" method="post" hidden action="@URL">
+    <form id="paynamics-form" name="form1" method="post" hidden action="@redirectUrl">
         <input type="text" name="paymentrequest" id="paymentrequest">
         <input type="submit">
     </form>
@@ -20,6 +25,76 @@
 
 <script>
     $(document).ready(function () {
+        const $_mid = '@Model.mid'; //<-- your merchant id
+        const $_requestid = '@Model.request_id';
+        const $_ipaddress = '@Model.ip_address';
+        const $_noturl = '@Model.notification_url'; // url where response is posted
+        const $_resurl = '@Model.response_url'; //url of merchant landing page
+        const $_cancelurl = '@Model.cancel_url'; //url of merchant landing page
+        const $_fname = '@Model.fname'; // kindly set this to first name of the cutomer
+        const $_mname = '@Model.mname'; // kindly set this to middle name of the cutomer
+        const $_lname = '@Model.lname'; // kindly set this to last name of the cutomer
+        const $_addr1 = '@Model.address1'; // kindly set this to address1 of the cutomer
+        const $_addr2 = '@Model.address2';// kindly set this to address2 of the cutomer
+        const $_city = '@Model.city'; // kindly set this to city of the cutomer
+        const $_state = '@Model.state'; // kindly set this to state of the cutomer
+        const $_country = '@Model.country'; // kindly set this to country of the cutomer
+        const $_zip = '@Model.zip'; // kindly set this to zip/postal of the cutomer
+        const $_sec3d = "try3d"; //
+        const $_email = '@Model.email'; // kindly set this to email of the cutomer
+        const $_phone = '@Model.phone'; // kindly set this to phone number of the cutomer
+        const $_mobile = '@Model.mobile'; // kindly set this to mobile number of the cutomer
+        const $_clientip = '@Model.client_ip';
+        const $_amount = '@String.Format("{0:0.00}",Model.amount)'; // kindly set this to the total amount of the transaction. Set the amount to 2 decimal point before generating signature.
+        const $_currency = '@Model.currency'; //PHP or USD
+        const $forSign = $_mid + $_requestid + $_ipaddress + $_noturl + $_resurl + $_fname + $_lname + $_mname + $_addr1 + $_addr2 + $_city + $_state + $_country + $_zip + $_email + $_phone + $_clientip + $_amount + $_currency + $_sec3d;
+        const $cert = '@ViewBag.MerchantKey'; //<-- your merchant key
+
+        const $_sign = CryptoJS.SHA512($forSign + $cert);
+
+
+        let xml = "";
+        xml = xml + "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
+        xml = xml + "<Request>";
+        xml = xml + "<orders>";
+        xml = xml + "<items>";
+        xml = xml + '@Html.Raw(orderXML)';
+        xml = xml + "</items>";
+        xml = xml + "</orders>";
+        xml = xml + "<mid>" + $_mid + "</mid>";
+        xml = xml + "<request_id>" + $_requestid + "</request_id>";
+        xml = xml + "<ip_address>" + $_ipaddress + "</ip_address>";
+        xml = xml + "<notification_url>" + $_noturl + "</notification_url>";
+        xml = xml + "<response_url>" + $_resurl + "</response_url>";
+        xml = xml + "<cancel_url>" + $_cancelurl + "</cancel_url>";
+        xml = xml + "<mtac_url></mtac_url>"; // pls set this to the url where your terms and conditions are hosted
+        xml = xml + "<descriptor_note>''</descriptor_note>"; // pls set this to the descriptor of the merchant ""
+        xml = xml + "<fname>" + $_fname + "</fname>";
+        xml = xml + "<lname>" + $_lname + "</lname>";
+        xml = xml + "<mname>" + $_mname + "</mname>";
+        xml = xml + "<address1>" + $_addr1 + "</address1>";
+        xml = xml + "<address2>" + $_addr2 + "</address2>";
+        xml = xml + "<city>" + $_city + "</city>";
+        xml = xml + "<state>" + $_state + "</state>";
+        xml = xml + "<country>" + $_country + "</country>";
+        xml = xml + "<zip>" + $_zip + "</zip>";
+        xml = xml + "<secure3d>" + $_sec3d + "</secure3d>";
+        xml = xml + "<trxtype>sale</trxtype>";
+        xml = xml + "<email>" + $_email + "</email>";
+        xml = xml + "<phone>" + $_phone + "</phone>";
+        xml = xml + "<mobile>" + $_mobile + "</mobile>";
+        xml = xml + "<client_ip>" + $_clientip + "</client_ip>";
+        xml = xml + "<amount>" + $_amount + "</amount>";
+        xml = xml + "<currency>" + $_currency + "</currency>";
+        xml = xml + "<mlogo_url></mlogo_url>";// pls set this to the url where your logo is hosted
+        xml = xml + "<pmethod></pmethod>";
+        xml = xml + "<signature>" + $_sign.toString() + "</signature>";
+        xml = xml + "</Request>";
+
+        console.log(xml)
+        document.getElementById('paymentrequest').value = btoa(xml);
         $("#paynamics-form").submit();
+
+
     });
 </script>

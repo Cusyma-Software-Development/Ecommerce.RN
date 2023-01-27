@@ -46,6 +46,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using static Grand.Web.Models.Checkout.PaynamicsTransactionModel;
 using static Grand.Web.Models.Checkout.PlatformRedirectModel;
 
 namespace Grand.Web.Controllers
@@ -1860,7 +1861,7 @@ namespace Grand.Web.Controllers
                     string requestIDGuid = Guid.NewGuid().ToString();
                     using (SHA512 shaM = new SHA512Managed())
                     {
-                        var data = shaM.ComputeHash(Encoding.UTF8.GetBytes("00000008121687BEA3FD" + requestIDGuid + responseId + "41F0B6591D508C8B9E839CC3F1391E00"));
+                        var data = shaM.ComputeHash(Encoding.UTF8.GetBytes("000000020919C9870B0B" + requestIDGuid + responseId + "F46D33C65271D0BEB44280D649374D90"));
                         // Create a new Stringbuilder to collect the bytes
                         // and create a string.
                         var sBuilder = new StringBuilder();
@@ -1881,7 +1882,7 @@ namespace Grand.Web.Controllers
                     string xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
                     xml += "<soap:Body>";
                     xml += "<query xmlns=\"https://ptiservice.paynamics.net/pnxquery\">";
-                    xml += "<merchantid>00000008121687BEA3FD</merchantid>";
+                    xml += "<merchantid>000000020919C9870B0B</merchantid>";
                     xml += "<request_id>" + requestIDGuid + "</request_id>";
                     xml += "<org_trxid>" + responseId + "</org_trxid>";
                     xml += "<org_trxid2/>";
@@ -1992,50 +1993,98 @@ namespace Grand.Web.Controllers
 
         public async Task<IActionResult> GoToPaymentRedirectPage(string id)
         {
+            string paynamicsurl = "https://ptiapps.paynamics.net/";
+            string merchantKey = "F46D33C65271D0BEB44280D649374D90";
+            string merchantId = "000000020919C9870B0B";
+
             var httpConnectionFeature = HttpContext.Features.Get<IHttpConnectionFeature>();
             var localIpAddress = httpConnectionFeature?.LocalIpAddress;
             PostProcessPaymentRequest orders = new PostProcessPaymentRequest();
-            GrandnodeOrderCreateObject orderCreateObject = new GrandnodeOrderCreateObject();
             var order = await _orderService.GetOrderById(id);
 
-            orderCreateObject.DateCreated = order.CreatedOnUtc;
-            orderCreateObject.UserReferenceId = order.CustomerId;
-            orderCreateObject.Subtotal = order.OrderSubtotalInclTax;
-            orderCreateObject.Discounts = order.OrderDiscount;
-            orderCreateObject.NetTotal = order.OrderTotal;
-            orderCreateObject.OrderId = order.OrderNumber.ToString();
+            orders.Order = order;
+            string scheme = _webHelper.GetStoreHost(false);
+            request response = new request();
+            response.orders = new request.Orders();
+            response.orders.items = new List<request.Orders.Items>();
+            response.mid = merchantId;
+            response.fname = orders.Order.FirstName;
+            response.mname = "";
+            response.lname = orders.Order.LastName;
+            response.address1 = orders.Order.BillingAddress.Address1;
+            response.address2 = orders.Order.BillingAddress.Address2;
+            response.city = orders.Order.BillingAddress.City;
+            response.state = "";
+            response.zip = orders.Order.BillingAddress.ZipPostalCode;
+            response.email = orders.Order.CustomerEmail;
+            response.phone = orders.Order.BillingAddress.PhoneNumber;
+            response.mobile = orders.Order.BillingAddress.PhoneNumber;
+            response.amount = orders.Order.OrderTotal;
+            response.currency = "PHP";
+            response.secure3d = "enabled";
+            response.country = "PH";
+            response.request_id = orders.Order.OrderNumber.ToString();
+            response.notification_url = scheme.Replace("http", "https").TrimEnd('/') + Url.Action("NotificationRoute", "Checkout");
+            response.response_url = scheme.Replace("http", "https").TrimEnd('/') + Url.Action("RedirectPaymentSuccess", "Checkout");
+            response.cancel_url = scheme.Replace("http", "https").TrimEnd('/') + Url.Action("CancelPayment", "Checkout");
+            response.ip_address = localIpAddress.ToString();
+            response.client_ip = "";
+            response.trxtype = "Sale";
+            response.expiry_limit = "";
+            response.descriptor_note = "";
+            response.pmethod = "";
+            string signature = "";
 
-            orderCreateObject.Items = new List<GrandnodeOrderCreateObject.Item>();
-            foreach(var item in order.OrderItems)
+            ViewBag.PaynamicsUrl = paynamicsurl;
+            ViewBag.MerchantId = merchantId;
+            ViewBag.MerchantKey = merchantKey;
+
+            using (SHA512 shaM = new SHA512Managed())
+            {
+                response.signature = Convert.ToBase64String(shaM.ComputeHash(Encoding.UTF8.GetBytes(response.mid + response.request_id + response.ip_address + response.notification_url + response.response_url + response.fname + response.lname + response.mname + response.address1 + response.address2 + response.city + response.state + response.country + response.zip + response.email + response.phone + response.client_ip + String.Format("{0:0.00}", response.amount) + response.currency + response.secure3d + merchantKey)));
+            }
+            response.orders.items = new List<request.Orders.Items>();
+            foreach (var item in orders.Order.OrderItems)
             {
                 Product prod = await _productService.GetProductById(item.ProductId);
-                orderCreateObject.Items.Add(new GrandnodeOrderCreateObject.Item
+                response.orders.items.Add(new request.Orders.Items
                 {
-                    ItemId = prod.Id,
-                    ItemName = prod.Name,
-                    Price = item.PriceInclTax,
-                    Quantity = item.Quantity,
-                    Subtotal = item.Quantity * item.PriceInclTax
+                    itemname = prod.Name,
+                    quantity = item.Quantity,
+                    amount = item.UnitPriceInclTax
                 });
             }
 
-            Result result = new Result();
-            using(HttpClient httpClient = new HttpClient())
+            if (order.OrderShippingInclTax > 0)
             {
-                var data = JsonConvert.SerializeObject(orderCreateObject);
-                var requestContent = new StringContent(data, Encoding.UTF8, "application/json");
-                var httpResponse = await httpClient.PostAsync("https://localhost:5001/open/createGrandnodeOrder", requestContent);                
-                result  = JsonConvert.DeserializeObject<Result>(httpResponse.Content.ReadAsStringAsync().Result);
+                response.orders.items.Add(new request.Orders.Items
+                {
+                    itemname = "Delivery Fee",
+                    quantity = 1,
+                    amount = order.OrderShippingInclTax
+                });
             }
 
-            if (result.IsSuccess)
+            if (order.OrderSubTotalDiscountInclTax > 0)
             {
-                return View("~/Views/PaymentRedirect/Redirect.cshtml", result.ResponseObject.ToString());
+                response.orders.items.Add(new request.Orders.Items
+                {
+                    itemname = "Discounts",
+                    quantity = 1,
+                    amount = order.OrderSubTotalDiscountInclTax * -1
+                });
+
             }
-            else
+
+            string xml = "";
+            using (var stringwriter = new System.IO.StringWriter())
             {
-                return View("~/Views/PaymentRedirect/Redirect.cshtml", result.ResponseObject.ToString());
-            }
+                var serializer = new XmlSerializer(response.orders.GetType());
+                serializer.Serialize(stringwriter, response.orders);
+                xml = stringwriter.ToString();
+            };
+
+            return View("~/Views/PaymentRedirect/Redirect.cshtml", response);
         }
 
         public string PaynamicsRemoveSpecialCharacter(string value)

@@ -7,14 +7,14 @@
 <partial name="_OldInternetExplorerWarning" />
 <main class="c-offcanvas-content-wrap">
     <partial name="Header" />
-        <div class="container page-container">
-            @await Component.InvokeAsync("Widget", new { widgetZone = "content_before" })
-            @if (IsSectionDefined("Breadcrumb"))
-            {
-                @RenderSection("Breadcrumb")
-            }
-            @RenderBody()
-            @await Component.InvokeAsync("Widget", new { widgetZone = "content_after" })
+        <div class="page-container">
+        @await Component.InvokeAsync("Widget", new { widgetZone = "content_before" })
+        @if (IsSectionDefined("Breadcrumb"))
+        {
+            @RenderSection("Breadcrumb")
+        }
+        @RenderBody()
+        @await Component.InvokeAsync("Widget", new { widgetZone = "content_after" })
         </div>
     @await Component.InvokeAsync("Footer")
 </main>
@@ -48,7 +48,7 @@
         @await Component.InvokeAsync("HeaderLinks")
     </ul>
 </aside>
-<aside class="js-offcanvas" style="background-color:#CCA315;" data-offcanvas-options='{"modifiers":"left,overlay","modal":true,"resize":false}' id="mobile_menu"></aside>
+<aside class="js-offcanvas" style="background-color:#FFCB1B;" data-offcanvas-options='{"modifiers":"left,overlay","modal":true,"resize":false}' id="mobile_menu"></aside>
 @await Component.InvokeAsync("FlyoutShoppingCart")
 <!-- Search Modal -->
 <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-hidden="true">
