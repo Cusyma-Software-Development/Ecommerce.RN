@@ -1967,7 +1967,7 @@ namespace Grand.Web.Controllers
                             var customerRoleNewUser = customer.CustomerRoles.Where(w => w.SystemName.ToUpper() == "NEW USER").FirstOrDefault();
                             if(customerRoleNewUser != null)
                             {
-                                await _customerService.DeleteCustomerRole(customerRoleNewUser);
+                                await _customerService.RemoveRoleFromCustomer(customer, "NEW USER");
                             }
                             return RedirectToAction("Completed", new { orderId = order.Id.ToString() });
                         }
@@ -2123,13 +2123,13 @@ namespace Grand.Web.Controllers
                 });
             }
 
-            if (order.OrderSubTotalDiscountInclTax > 0)
+            if (order.OrderDiscount > 0)
             {
                 response.orders.items.Add(new request.Orders.Items
                 {
                     itemname = "Discounts",
                     quantity = 1,
-                    amount = order.OrderSubTotalDiscountInclTax * -1
+                    amount = order.OrderDiscount * -1
                 });
 
             }
