@@ -334,8 +334,8 @@ input {
 }
 
 .btn-secondary {
-    color: #fff;
-    background-color: #3d3d3d;
+    color: #fff !important;
+    background-color: black;
     border-color: #3d3d3d;
 }
 

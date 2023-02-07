@@ -19,18 +19,30 @@
         });
     </script>
 }
+
+<div class="elementor-shape elementor-shape-top" data-negative="false">
+    <svg style="transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2600 131.1"
+         preserveAspectRatio="none">
+         <path style="fill:#FFCB1B" class="elementor-shape-fill" d="M0 0L2600 0 2600 69.1 0 0z"></path>
+        <path class="elementor-shape-fill" style="opacity:0.5;fill:#FFCB1B" d="M0 0L2600 0 2600 69.1 0 69.1z"></path>
+        <path class="elementor-shape-fill" style="opacity:0.25;fill:#FFCB1B" d="M2600 0L0 0 0 130.1 2600 69.1z"></path>
+    </svg>
+</div>
+
+
+<div class="container">
 <div class="page order-details-page mb-3">
     @if (!Model.PrintMode)
     {
-        <h1 class="generalTitle">@T("Order.OrderInformation")</h1>
+        <h1 class="generalTitle h2 rncolor">@T("Order.OrderInformation")</h1>
         <div asp-validation-summary="All"></div>
 
         <div class="btn-group btn-group-sm">
-            <a href="@Url.RouteUrl("PrintOrderDetails", new { orderId = Model.Id })" target="_blank" class="btn btn-outline-secondary print-order-button">@T("Order.Print")</a>
+            <a href="@Url.RouteUrl("PrintOrderDetails", new { orderId = Model.Id })" target="_blank" class="btn btn-outline-secondary print-order-button g8button">@T("Order.Print")</a>
 
             @if (!Model.PdfInvoiceDisabled)
             {
-                <a href="@Url.RouteUrl("GetOrderPdfInvoice", new { orderId = Model.Id })" class="btn btn-outline-secondary pdf-invoice-button">@T("Order.GetPDFInvoice")</a>
+                <a href="@Url.RouteUrl("GetOrderPdfInvoice", new { orderId = Model.Id })" class="btn btn-outline-secondary pdf-invoice-button g8button">@T("Order.GetPDFInvoice")</a>
             }
 
             @if (Model.ShowAddOrderNote)
@@ -61,7 +73,7 @@
         @await Component.InvokeAsync("Widget", new { widgetZone = "orderdetails_page_overview", additionalData = Model.Id })
     </div>
 
-    <div class="order-details-area">
+    <div class="order-details-area d-none">
         <div class="card">
             <div class="card-body d-flex flex-row row">
                 <div class="col-sm-6 col-12 billing">
@@ -488,11 +500,11 @@ Model.BillingAddress.ZipPostalCodeEnabled)
                     <div class="actions">
                         @if (Model.IsReOrderAllowed)
                         {
-                            <input type="button" value="@T("Order.Reorder")" class="btn btn-outline-info re-order-button" onclick="setLocation('@Url.RouteUrl("ReOrder", new { orderId = Model.Id })    ')" />
+                            <input type="button" value="@T("Order.Reorder")" class="btn btn-outline-info re-order-button g8button" onclick="setLocation('@Url.RouteUrl("ReOrder", new { orderId = Model.Id })    ')" />
                         }
                         @if (Model.IsReturnRequestAllowed)
                         {
-                            <input type="button" value="@T("Order.ReturnItems")" class="btn btn-outline-info return-items-button" onclick="setLocation('@Url.RouteUrl("ReturnRequest", new { orderId = Model.Id })    ')" />
+                            <input type="button" value="@T("Order.ReturnItems")" class="btn btn-outline-info return-items-button g8button" onclick="setLocation('@Url.RouteUrl("ReturnRequest", new { orderId = Model.Id })    ')" />
                         }
                     </div>
                 }
@@ -755,4 +767,19 @@ Model.BillingAddress.ZipPostalCodeEnabled)
         }
     }
     @await Component.InvokeAsync("Widget", new { widgetZone = "orderdetails_page_bottom", additionalData = Model.Id })
+</div>
+
+</div>
+
+                                                
+
+<div class="elementor-shape  elementor-shape-bottom" data-negative="false">
+    <svg style="height: 144px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2600 131.1"
+         preserveAspectRatio="none">
+        <path style="fill:#FFCB1B" class="elementor-shape-fill" d="M0 0L2600 0 2600 69.1 0 0z"></path>
+        <path class="elementor-shape-fill" style="opacity:0.5;fill:#FFCB1B" d="M0 0L2600 0 2600 69.1 0 69.1z">
+        </path>
+        <path class="elementor-shape-fill" style="opacity:0.25;fill:#FFCB1B" d="M2600 0L0 0 0 130.1 2600 69.1z">
+        </path>
+    </svg>
 </div>

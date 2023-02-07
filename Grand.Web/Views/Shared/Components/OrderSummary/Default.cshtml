@@ -366,22 +366,26 @@
 
 
                                     </script>
-                                    @if (Model.ShowCheckoutAsGuestButton)
-                                    {
-                                        <button type="button" id="checkoutasguest" class="btn btn-secondary checkout-as-guest-button mr-1">
-                                            @T("Account.Login.CheckoutAsGuest")
-                                        </button>
-                                    }
-                                    <button type="button" id="checkout" name="checkout" value="checkout" class="float-sm-right btn btn-info checkout-button">
-                                        @if (Model.IsGuest)
-                                        {
-                                            @T("Checkout.Button.Login")
-                                        }
-                                        else
-                                        {
-                                            @T("Checkout.Button")
-                                        }
+
+                                   @if (Model.ShowCheckoutAsGuestButton)
+                                {
+                                    <button type="button" id="checkoutasguest" class="btn btn-secondary checkout-as-guest-button mr-1">
+                                        @T("Account.Login.CheckoutAsGuest")
                                     </button>
+                                }
+                                @if (Model.IsGuest)
+                                {
+                                    <a href="@(T("Platform.BaseUrl")+"Identity/Account/Login")" class="g8button float-sm-right btn btn-info checkout-button">
+                                        @T("Checkout.Button.Login")
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button type="button" id="checkout" name="checkout" value="checkout" class="g8button float-sm-right btn btn-info checkout-button">
+                                        @T("Checkout.Button")
+                                    </button>
+                                }
+
                                 }
                             </div>
                             <div class="addon-buttons">
