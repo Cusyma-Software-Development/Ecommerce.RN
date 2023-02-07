@@ -1085,7 +1085,7 @@ footer a {
     }
 
     .mobileFooter {
-        display: content;
+        display: flex;
     }
 
     .headerimg {
