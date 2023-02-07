@@ -1020,7 +1020,7 @@ footer a {
 
 
 .desktopFooter {
-    display: flex;
+    display: content;
 }
 
 .mobileFooter {
@@ -1085,7 +1085,7 @@ footer a {
     }
 
     .mobileFooter {
-        display: flex;
+        display: content;
     }
 
     .headerimg {
