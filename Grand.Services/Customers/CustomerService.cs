@@ -480,6 +480,19 @@ namespace Grand.Services.Customers
             //event notification
             await _mediator.EntityUpdated(customer);
         }
+
+        public virtual async Task RemoveRoleFromCustomer(Customer customer, string role)
+        {
+            if (customer == null)
+                throw new ArgumentNullException("customer");
+            var roles = customer.CustomerRoles.Where(w => w.SystemName.ToUpper() == role.ToUpper()).FirstOrDefault();
+            customer.CustomerRoles.Remove(roles);
+            var builder = Builders<Customer>.Filter;
+            var filter = builder.Eq(x => x.Id, customer.Id);
+            var update = Builders<Customer>.Update
+                .Set(x => x.CustomerRoles, customer.CustomerRoles);
+            await _customerRepository.Collection.UpdateOneAsync(filter, update);
+        }
         /// <summary>
         /// Updates the customer - last activity date
         /// </summary>

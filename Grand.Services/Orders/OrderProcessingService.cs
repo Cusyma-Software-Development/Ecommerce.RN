@@ -1324,7 +1324,10 @@ namespace Grand.Services.Orders
                     #region Save order details
 
                     var order = PrepareOrder(processPaymentRequest, processPaymentResult, details);
-                    order.ShippingMethod = order.ShippingMethod.Replace("{StoreName}", _storeContext.CurrentStore.Name);
+                    if (order.ShippingMethod != null)
+                    {
+                        order.ShippingMethod = order.ShippingMethod.Replace("{StoreName}", _storeContext.CurrentStore.Name);
+                    }
                     if (!processPaymentRequest.IsRecurringPayment)
                     {
                         result.PlacedOrder = await SaveOrderDetails(details, order);

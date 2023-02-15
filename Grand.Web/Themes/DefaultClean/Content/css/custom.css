@@ -1019,29 +1019,29 @@ footer a {
     }
 
 
-    .desktopFooter {
-        content-visibility: visible;
-    }
+.desktopFooter {
+    display: content;
+}
 
-    .mobileFooter {
-        content-visibility: hidden;
-    }
+.mobileFooter {
+    display: table-column;
+}
 
-    .desktopNav {
-        content-visibility: visible;
-    }
+.desktopNav {
+    display: flex;
+}
 
-    .mobileNav {
-        content-visibility: hidden;
-    }
+.mobileNav {
+    display: table-column;
+}
 
     .desktopPackage {
-        content-visibility: visible;
+      display:flex;
     }
 
 
     .mobilePackage {
-        content-visibility: hidden;
+       display:none;
     }
 
 
@@ -1049,13 +1049,13 @@ footer a {
         padding: 130px 50px;
     }
 
-    .desktophome {
-        content-visibility: visible;
-    }
+.desktophome {
+    display: contents;
+}
 
-    .mobilehome {
-        content-visibility: hidden;
-    }
+.mobilehome {
+    display: table-column;
+}
 
     .aboutimage {
         padding: 300px 30px !important;
@@ -1067,11 +1067,11 @@ footer a {
 
     @media (max-width: 1306px) {
         .desktopNav {
-            content-visibility: hidden;
+            display: none;
         }
 
         .mobileNav {
-            content-visibility: visible;
+            display:contents;
         }
 
         .abouttext {
@@ -1081,15 +1081,15 @@ footer a {
 
 @media (max-width: 991px) {
     .desktopFooter {
-        content-visibility: hidden;
+        display: table-column;
     }
 
     .mobileFooter {
-        content-visibility: visible;
+        display: flex;
     }
 
     .headerimg {
-        display: none;
+        display: table-column;
     }
 
     .headertop {
@@ -1125,11 +1125,11 @@ footer a {
     }
 
     .desktophome {
-        content-visibility: hidden;
+        display: table-column;
     }
 
     .mobilehome {
-        content-visibility: visible;
+        display: contents;
     }
 
     .container {
@@ -1143,11 +1143,11 @@ footer a {
 
     @media (max-width: 1049px) {
         .desktopPackage {
-            content-visibility: hidden;
+            display: none;
         }
 
         .mobilePackage {
-            content-visibility: visible;
+           display:flex;
         }
     }
 

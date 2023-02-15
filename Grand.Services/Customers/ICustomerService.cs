@@ -396,5 +396,7 @@ namespace Grand.Services.Customers
         Task<IList<CustomerNote>> GetCustomerNotes(string customerId, bool? displaytocustomer = null);
 
         #endregion
+
+        Task RemoveRoleFromCustomer(Customer customer, string role);
     }
 }

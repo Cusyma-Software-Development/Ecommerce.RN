@@ -38,8 +38,20 @@
     $(".opc li.active").prev("li").removeClass("dontGo");
     $(".opc li.active").nextAll("li").addClass("dontGo");
 </script>
+
+<div class="elementor-shape elementor-shape-top" data-negative="false">
+    <svg style="transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2600 131.1"
+         preserveAspectRatio="none">
+         <path style="fill:#FFCB1B" class="elementor-shape-fill" d="M0 0L2600 0 2600 69.1 0 0z"></path>
+        <path class="elementor-shape-fill" style="opacity:0.5;fill:#FFCB1B" d="M0 0L2600 0 2600 69.1 0 69.1z"></path>
+        <path class="elementor-shape-fill" style="opacity:0.25;fill:#FFCB1B" d="M2600 0L0 0 0 130.1 2600 69.1z"></path>
+    </svg>
+</div>
+
+
+<div class="container pt2 pb-2">
 <div class="page checkout-page">
-    <h1 class="generalTitle h2">@T("Checkout")</h1>
+    <h1 class="generalTitle h2 rncolor">@T("Checkout")</h1>
     @await Component.InvokeAsync("Widget", new { widgetZone = "opc_content_before" })
     <ol class="opc pl-0" id="checkout-steps">
         <li id="opc-billing" class="tab-section allow">
@@ -207,6 +219,21 @@
     </ol>
     @await Component.InvokeAsync("Widget", new { widgetZone = "opc_content_after" })
 </div>
+</div>
+
+
+<div class="elementor-shape  elementor-shape-bottom" data-negative="false">
+    <svg style="height: 144px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2600 131.1"
+         preserveAspectRatio="none">
+        <path style="fill:#FFCB1B" class="elementor-shape-fill" d="M0 0L2600 0 2600 69.1 0 0z"></path>
+        <path class="elementor-shape-fill" style="opacity:0.5;fill:#FFCB1B" d="M0 0L2600 0 2600 69.1 0 69.1z">
+        </path>
+        <path class="elementor-shape-fill" style="opacity:0.25;fill:#FFCB1B" d="M2600 0L0 0 0 130.1 2600 69.1z">
+        </path>
+    </svg>
+</div>
+
+
 <script asp-location="Footer">
         Accordion.init('checkout-steps', '.step-title', true);
         Accordion.openSection('#opc-billing');
