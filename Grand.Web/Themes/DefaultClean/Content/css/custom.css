@@ -1039,11 +1039,13 @@ footer a {
       display:flex;
     }
 
+    .tabletPackage {
+      display: none;
+    }
 
     .mobilePackage {
        display:none;
     }
-
 
     .home1 {
         padding: 130px 50px;
@@ -1141,13 +1143,33 @@ footer a {
     }
 }
 
-    @media (max-width: 1049px) {
-        .desktopPackage {
-            display: none;
-        }
 
-        .mobilePackage {
-           display:flex;
-        }
+
+@media (min-width: 768px) and (max-width: 1048px) {
+    .desktopPackage {
+        display: none;
     }
+
+    .tabletPackage {
+        display: flex;
+        padding: 2% 10%;
+    }
+
+    .mobilePackage {
+        display: none;
+    }
+}
+@media (max-width: 767px) {
+    .desktopPackage {
+        display: none;
+    }
+
+    .tabletPackage {
+        display: none;
+    }
+
+    .mobilePackage {
+        display: flex;
+    }
+}
 
