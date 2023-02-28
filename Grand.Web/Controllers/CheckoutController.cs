@@ -2066,10 +2066,10 @@ namespace Grand.Web.Controllers
             response.orders = new request.Orders();
             response.orders.items = new List<request.Orders.Items>();
             response.mid = merchantId;
-            response.fname = orders.Order.FirstName;
+            response.fname = orders.Order.BillingAddress.FirstName;
             response.mname = "";
-            response.lname = orders.Order.LastName;
-            response.address1 = orders.Order.BillingAddress.Address1;
+            response.lname = orders.Order.BillingAddress.LastName;
+            response.address1 = String.IsNullOrEmpty(orders.Order.BillingAddress.Address1) ? "BGC, TAGUIG CITY" : orders.Order.BillingAddress.Address1;
             response.address2 = orders.Order.BillingAddress.Address2;
             response.city = orders.Order.BillingAddress.City;
             response.state = "";
