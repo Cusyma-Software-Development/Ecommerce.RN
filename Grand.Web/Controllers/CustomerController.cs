@@ -393,6 +393,50 @@ namespace Grand.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public virtual async Task<IActionResult> UpdateCustomerProfileBatch([FromBody] List<GenericModel.UpdateCustomerProfile> list)
+        {
+            GenericModel.Result result = new GenericModel.Result();
+            try
+            {
+                foreach (var model in list)
+                {
+                    var customer = await _customerService.GetCustomerById(model.reference);
+                    if (customer != null)
+                    {
+                        var femaleRole = await _customerService.GetCustomerRoleBySystemName("Women");
+                        //Update Gender role 
+                        if (model.gender.ToUpper() == "FEMALE")
+                        {
+                            if (!customer.CustomerRoles.Where(w => w.SystemName.ToUpper() == "WOMEN").Any())
+                            {
+                                femaleRole.CustomerId = customer.Id;
+                                customer.CustomerRoles.Add(femaleRole);
+                                await _customerService.InsertCustomerRoleInCustomer(femaleRole);
+                            }
+                        }
+                        else
+                        {
+                            await _customerService.RemoveRoleFromCustomer(customer, "Women");
+                            customer.CustomerRoles.Remove(femaleRole);
+                        }
+                        await _customerService.UpdateCustomer(customer);
+                        result = new GenericModel.Result { IsSuccess = true, Message = "Customer updated", StatusCode = 200 };
+                    }
+                    else
+                    {
+                        result = new GenericModel.Result { IsSuccess = false, Message = "Customer does not exist", StatusCode = 500, ResponseObject = model };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = new GenericModel.Result { IsSuccess = false, Message = ex.ToString(), StatusCode = 500 };
+            }
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public virtual async Task<IActionResult> RegisterExternalBatch([FromBody] List<GenericModel.RegistrationModel> batch)
         {
             GenericModel.Result result = new GenericModel.Result();
