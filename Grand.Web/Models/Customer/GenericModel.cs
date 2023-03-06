@@ -16,6 +16,13 @@ namespace Grand.Web.Models.Customer
             public string firstName { get; set; }
             public string lastName { get; set; }
             public string password { get; set; }
+            public string gender { get; set; }
+        }
+
+        public class UpdateCustomerProfile
+        {
+            public string reference { get; set; } = "";
+            public string gender { get; set; } = "";
         }
 
         public class RegisterBatchResult

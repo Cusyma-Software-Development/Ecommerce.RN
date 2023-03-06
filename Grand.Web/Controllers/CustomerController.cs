@@ -1,4 +1,5 @@
-﻿using Grand.Api.Commands.Models.Customers;
+﻿using Amazon.Runtime;
+using Grand.Api.Commands.Models.Customers;
 using Grand.Api.DTOs.Customers;
 using Grand.Api.Extensions;
 using Grand.Core;
@@ -267,7 +268,7 @@ namespace Grand.Web.Controllers
                     StoreId = _storeContext.CurrentStore.Id.ToString(),
                     Active = true,
                     Deleted = false,
-                    Gender = "",
+                    Gender = model.gender,
                     FirstName = model.firstName,
                     LastName = model.lastName,
                     DateOfBirth = DateTime.Now,
@@ -293,6 +294,15 @@ namespace Grand.Web.Controllers
                 customer.LastActivityDateUtc = DateTime.UtcNow;
                 customer.CustomerRoles.Add(registeredRole);
                 customer.CustomerRoles.Add(newUserRole);
+                if (!String.IsNullOrEmpty(model.gender))
+                {
+                    var femaleGenderRole = await _customerService.GetCustomerRoleBySystemName("Women");
+                    if (femaleGenderRole != null)
+                    {
+                        customer.CustomerRoles.Add(femaleGenderRole);
+                    }
+                }
+
 
                 var country = await _countryService.GetCountryByTwoLetterIsoCode("PH");
 
@@ -336,6 +346,91 @@ namespace Grand.Web.Controllers
             catch (Exception ex)
             {
                 result = new GenericModel.Result { Message = ex.ToString(), StatusCode = 500, IsSuccess = false };
+            }
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> UpdateCustomerProfile([FromBody]GenericModel.UpdateCustomerProfile model)
+        {
+            GenericModel.Result result = new GenericModel.Result();
+            try
+            {
+                var customer = await _customerService.GetCustomerById(model.reference);
+                if (customer != null)
+                {
+                    var femaleRole = await _customerService.GetCustomerRoleBySystemName("Women");
+                    //Update Gender role 
+                    if (model.gender.ToUpper() == "FEMALE")
+                    {
+                        if (!customer.CustomerRoles.Where(w => w.SystemName.ToUpper() == "WOMEN").Any())
+                        {
+                            femaleRole.CustomerId = customer.Id;
+                            customer.CustomerRoles.Add(femaleRole);
+                            await _customerService.InsertCustomerRoleInCustomer(femaleRole);
+                        }
+                    }
+                    else
+                    {
+                        await _customerService.RemoveRoleFromCustomer(customer, "Women");
+                        customer.CustomerRoles.Remove(femaleRole);
+                    }
+                    await _customerService.UpdateCustomer(customer);
+                    result = new GenericModel.Result { IsSuccess = true, Message = "Customer updated", StatusCode = 200 };
+                }
+                else
+                {
+                    result = new GenericModel.Result { IsSuccess = false, Message = "Customer does not exist", StatusCode = 500, ResponseObject = model };
+                }
+            }
+            catch (Exception ex)
+            {
+                result = new GenericModel.Result { IsSuccess = false, Message = ex.ToString(), StatusCode = 500 };
+            }
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> UpdateCustomerProfileBatch([FromBody] List<GenericModel.UpdateCustomerProfile> list)
+        {
+            GenericModel.Result result = new GenericModel.Result();
+            try
+            {
+                foreach (var model in list)
+                {
+                    var customer = await _customerService.GetCustomerById(model.reference);
+                    if (customer != null)
+                    {
+                        var femaleRole = await _customerService.GetCustomerRoleBySystemName("Women");
+                        //Update Gender role 
+                        if (model.gender.ToUpper() == "FEMALE")
+                        {
+                            if (!customer.CustomerRoles.Where(w => w.SystemName.ToUpper() == "WOMEN").Any())
+                            {
+                                femaleRole.CustomerId = customer.Id;
+                                customer.CustomerRoles.Add(femaleRole);
+                                await _customerService.InsertCustomerRoleInCustomer(femaleRole);
+                            }
+                        }
+                        else
+                        {
+                            await _customerService.RemoveRoleFromCustomer(customer, "Women");
+                            customer.CustomerRoles.Remove(femaleRole);
+                        }
+                        await _customerService.UpdateCustomer(customer);
+                        result = new GenericModel.Result { IsSuccess = true, Message = "Customer updated", StatusCode = 200 };
+                    }
+                    else
+                    {
+                        result = new GenericModel.Result { IsSuccess = false, Message = "Customer does not exist", StatusCode = 500, ResponseObject = model };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = new GenericModel.Result { IsSuccess = false, Message = ex.ToString(), StatusCode = 500 };
             }
             return StatusCode(result.StatusCode, result);
         }

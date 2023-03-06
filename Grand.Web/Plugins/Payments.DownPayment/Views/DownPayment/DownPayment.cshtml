@@ -1,0 +1,63 @@
+﻿@model Grand.Plugin.Payments.DownPayment.Models.PaymentInfoModel
+
+<div class="row">
+    <div class="col-lg-12">
+        @Html.Raw(T("Downpayment.Description"))
+    </div>
+</div>
+<hr />
+<div class="container">
+    <div class="row align-items-center mb-3">
+        <div class="col-md-4 col-12 text-md-right">
+            <label asp-for="AccountName" class="col-form-label">Your account name :</label>
+        </div>
+        <div class="col-md-4 col-12 text-right">
+            <input asp-for="AccountName" class="form-control" autofocus="autofocus" required/>
+            <span></span>
+        </div>
+    </div>
+    <div class="row align-items-center mb-3">
+        <div class="col-md-4 col-12 text-md-right">
+            <label asp-for="DownPaymentAmount" class="col-form-label">Amount Deposited :</label>
+        </div>
+        <div class="col-md-4 col-12 text-right">
+            <input type="number" asp-for="DownPaymentAmount" class="form-control" autofocus="autofocus" required/>
+            <span></span>
+        </div>
+    </div>
+    <div class="row align-items-center mb-3">
+        <div class="col-md-4 col-12 text-md-right">
+            <label asp-for="Attachment" class="col-form-label">Proof of Payment :</label>
+        </div>
+        <div class="col-md-4 col-12 text-right">
+            <input asp-for="Attachment" id="Attachment" name="Attachment" type="file" class="form-control" onchange="attachmentChanged()" accept=".png,.jpg,.jpeg,.bpm,.pdf" required/>
+            <span></span>
+        </div>
+    </div>
+    <div class="row align-items-center mb-3">
+        <div class="col-md-4 col-12 text-right">
+            <input asp-for="AttachmentName" id="AttachmentName" name="AttachmentName" type="hidden" class="form-control" autofocus="autofocus"/>
+            <span></span>
+        </div>
+    </div>
+    <div class="row align-items-center mb-3">
+        <div class="col-md-4 col-12 text-right">
+            <input asp-for="AttachmentFile" id="AttachmentFile" name="AttachmentFile" type="hidden" class="form-control" autofocus="autofocus" />
+            <span></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function attachmentChanged() {
+        var file = $("#Attachment")[0].files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                document.getElementById("AttachmentName").value = $("#Attachment")[0].files[0].name
+                document.getElementById("AttachmentFile").value = e.target.result
+            };
+        }
+    }
+</script>
