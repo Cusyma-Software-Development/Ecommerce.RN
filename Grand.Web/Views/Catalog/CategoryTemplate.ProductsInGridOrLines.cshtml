@@ -65,131 +65,254 @@
 </div>
 
 <div class="page category-page">
-    
-    <div class="text-center mt-4 mb-5 headertext">
 
-            <span class="rncolor">@Model.Name</span>
-
-    </div>
-
-    @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_top", additionalData = Model.Id })
-    @*description*@
-    @if (!String.IsNullOrWhiteSpace(Model.Description))
-    {
-        <div class="card category-description">
-            <div class="card-body">
-                <h2 class="card-title m-0">
-                    @Html.Raw(Model.Description)
-                </h2>
-            </div>
-        </div>
-    }
-    @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_subcategories", additionalData = Model.Id })
-    @*subcategories*@
-    @if (Model.SubCategories.Any())
-    {
-        <div class="categoryGrid col-12 px-0 text-center">
-            <div class="flex-grid form-row">
-                @foreach (var item in Model.SubCategories)
-                {
-                    <div class="col-md-4 col-6 mb-2">
-                        <div class="card p-0">
-                            <div class="list-picture">
-                                <a href="@Url.RouteUrl("Category", new { SeName = item.SeName })" title="@item.PictureModel.Title">
-                                    <img class="img-fluid" alt="@item.PictureModel.AlternateText" src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
-                                </a>
-                            </div>
-                            <div class="list-title mt-3">
-                                <h3 class="h6 card-title m-0 p-0">
-                                    <a href="@Url.RouteUrl("Category", new { SeName = item.SeName })">
-                                        @item.Name
-                                    </a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    }
-    @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_featured_products", additionalData = Model.Id })
-    @*featured products*@
-    @if (Model.FeaturedProducts.Any())
-    {
-        <div class="page-separator"></div>
-        <div class="col-12 product-grid customGrid text-center featured-product-grid px-0">
-            <h2 class="h5 text-left">
-                <span>@T("Products.FeaturedProducts")</span>
-            </h2>
-            <div class="form-row flex-grid">
-                @foreach (var item in Model.FeaturedProducts)
-                {
-                    <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
-                        <partial name="_ProductBox" model="item" />
-                    </div>
-                }
-            </div>
-        </div>
-    }
-    @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_after_featured_products", additionalData = Model.Id })
-
-    @if (Model.Products.Any())
-    {
-    @*    @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_filters", additionalData = Model.Id })
-
-        <partial name="_CatalogSelectors" model="Model.PagingFilteringContext" />
-
-        @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_product_list", additionalData = Model.Id })*@
-
-        if (Model.PagingFilteringContext.ViewMode == "grid")
+    <div class="mx-auto" style="width: min(87.5rem,90%);">
+        @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_top", additionalData = Model.Id })
+        @*description*@
+        @if (!String.IsNullOrWhiteSpace(Model.Description))
         {
-            <div class="product-grid col-12 px-0">
-                <div class="form-row flex-grid">
-                    @foreach (var product in Model.Products)
+            <div class="card category-description">
+                <div class="card-body">
+                    <h2 class="card-title m-0">
+                        @Html.Raw(Model.Description)
+                    </h2>
+                </div>
+            </div>
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_subcategories", additionalData = Model.Id })
+        @*subcategories*@
+        @*@if (Model.SubCategories.Any())
+        {
+            <div class="categoryGrid col-12 px-0 text-center">
+                <div class="flex-grid form-row">
+                    @foreach (var item in Model.SubCategories)
                     {
-                        <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
-                            <partial name="_ProductBox" model="product" />
+                        <div class="col-md-4 col-6 mb-2">
+                            <div class="card p-0">
+                                <div class="list-picture">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = item.SeName })" title="@item.PictureModel.Title">
+                                        <img class="img-fluid" alt="@item.PictureModel.AlternateText" src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                    </a>
+                                </div>
+                                <div class="list-title mt-3">
+                                    <h3 class="h6 card-title m-0 p-0">
+                                        <a href="@Url.RouteUrl("Category", new { SeName = item.SeName })">
+                                            @item.Name
+                                        </a>
+                                    </h3>
+                                </div>
+                            </div>
                         </div>
                     }
                 </div>
-
-                @{
-                    var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
-                }
-                @if (!pager.IsEmpty())
-                {
-                    <nav aria-label="Page navigation">
-                        @pager
-                    </nav>
-                }
-                @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_bottom", additionalData = Model.Id })
             </div>
-        }
-        else
+        }*@
+        @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_featured_products", additionalData = Model.Id })
+        @*featured products*@
+        @if (Model.FeaturedProducts.Any())
         {
-            <div class="product-grid">
-                <div class="col-12">
-                    <div class="row">
-                        @foreach (var product in Model.Products)
-                        {
-                            <partial name="_ProductBoxList" model="product" />
-                        }
-                        @{
-                            var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
-                        }
-                        @if (!pager.IsEmpty())
-                        {
-                            <nav aria-label="Page navigation">
-                                @pager
-                            </nav>
-                        }
-                        @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_bottom", additionalData = Model.Id })
-                    </div>
+            <div class="page-separator"></div>
+            <div class="col-12 product-grid customGrid text-center featured-product-grid px-0">
+                <h2 class="h5 text-left">
+                    <span>@T("Products.FeaturedProducts")</span>
+                </h2>
+                <div class="form-row flex-grid">
+                    @foreach (var item in Model.FeaturedProducts)
+                    {
+                        <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                            <partial name="_ProductBox" model="item" />
+                        </div>
+                    }
                 </div>
             </div>
-
         }
-    }
+        @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_after_featured_products", additionalData = Model.Id })
+
+        <div class="text-center mt-4 mb-3 headertext">
+            <span class="rncolor">@Model.Name</span>
+        </div>
+
+        <div class="text-center mt-4 mb-2 sub-heading">
+            <span>@T("PROMOS")</span>
+        </div>
+        <hr class="mb-5" style="background-color: #a5a5a5;" />
+
+        @if (Model.Products.Any())
+        {
+        @*@await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_filters", additionalData = Model.Id })
+        <partial name="_CatalogSelectors" model="Model.PagingFilteringContext" />
+        @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_before_product_list", additionalData = Model.Id })*@
+
+            if (Model.PagingFilteringContext.ViewMode == "grid")
+            {
+                <div class="product-grid col-12 px-0">
+                    <div class="form-row flex-grid">
+                        @foreach (var product in Model.Products)
+                        {
+                            <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                                <partial name="_ProductBox" model="product" />
+                            </div>
+                        }
+                    </div>
+
+                    @{
+                        var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
+                    }
+                    @if (!pager.IsEmpty())
+                    {
+                        <nav aria-label="Page navigation">
+                            @pager
+                        </nav>
+                    }
+                    @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_bottom", additionalData = Model.Id })
+                </div>
+            }
+            else
+            {
+                <div class="product-grid">
+                    <div class="col-12 d-flex justify-content-center">
+                        <div class="row flex-grid justify-content-center mb-2 custom-content" style="grid-gap: 1rem;">
+                            @foreach (var product in Model.Products)
+                            {
+                                @if (product.ShortDescription == "PROMOS")
+                                {
+                                    <partial name="_ProductBoxListNew" model="product" />
+                                }
+                                
+                            }
+                            @{
+                                var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
+                            }
+                            @if (!pager.IsEmpty())
+                            {
+                                <nav aria-label="Page navigation">
+                                    @pager
+                                </nav>
+                            }
+                            @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_bottom", additionalData = Model.Id })
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="text-center mt-4 mb-2 sub-heading">
+            <span>@T("BUNDLES")</span>
+        </div>
+        <hr class="mb-5" style="background-color: #a5a5a5;" />
+
+        @if (Model.Products.Any())
+        {
+            if (Model.PagingFilteringContext.ViewMode == "grid")
+            {
+                <div class="product-grid col-12 px-0">
+                    <div class="form-row flex-grid">
+                        @foreach (var product in Model.Products)
+                        {
+                            <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                                <partial name="_ProductBox" model="product" />
+                            </div>
+                        }
+                    </div>
+                    @{ var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber"); }
+                    @if (!pager.IsEmpty())
+                    {
+                        <nav aria-label="Page navigation">
+                            @pager
+                        </nav>
+                    }
+                    @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_bottom", additionalData = Model.Id })
+                </div>
+            }
+            else
+            {
+                <div class="product-grid">
+                    <div class="col-12 d-flex justify-content-center p-0">
+                        <div class="row flex-grid justify-content-center mb-2 custom-content" style="grid-gap: 1rem;">
+                            @foreach (var product in Model.Products)
+                            {
+                                @if (product.ShortDescription == "BUNDLES")
+                                {
+                                        <partial name="_ProductBoxList" model="product" />
+                                }
+
+                            }
+                            @{
+                                var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
+                            }
+                            @if (!pager.IsEmpty())
+                            {
+                                <nav aria-label="Page navigation">
+                                    @pager
+                                </nav>
+                            }
+                            @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_bottom", additionalData = Model.Id })
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="text-center mt-4 mb-2 sub-heading">
+            <span>@T("PRIVATE CLIMB")</span>
+        </div>
+        <hr class="mb-5" style="background-color: #a5a5a5;" />
+
+        @if (Model.Products.Any())
+        {
+            if (Model.PagingFilteringContext.ViewMode == "grid")
+            {
+                <div class="product-grid col-12 px-0">
+                    <div class="form-row flex-grid">
+                        @foreach (var product in Model.Products)
+                        {
+                            <div class="col-lg-4 col-sm-6 col-6 product-container mb-2">
+                                <partial name="_ProductBox" model="product" />
+                            </div>
+                        }
+                    </div>
+                    @{
+                        var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
+                    }
+                    @if (!pager.IsEmpty())
+                    {
+                        <nav aria-label="Page navigation">
+                            @pager
+                        </nav>
+                    }
+                    @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_bottom", additionalData = Model.Id })
+                </div>
+            }
+            else
+            {
+                <div class="product-grid">
+                    <div class="col-12 d-flex justify-content-center p-0">
+                        <div class="row flex-grid justify-content-center mb-2 custom-content" style="grid-gap: 1rem;">
+                            @foreach (var product in Model.Products)
+                            {
+                                @if (product.ShortDescription == "PRIVATE CLIMB")
+                                {
+                                    <partial name="_ProductBoxListNew" model="product" />
+                                }
+
+                            }
+                            @{
+                                var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
+                            }
+                            @if (!pager.IsEmpty())
+                            {
+                                <nav aria-label="Page navigation">
+                                    @pager
+                                </nav>
+                            }
+                            @await Component.InvokeAsync("Widget", new { widgetZone = "categorydetails_bottom", additionalData = Model.Id })
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
 </div>
 
  <div class="elementor-shape  elementor-shape-bottom" data-negative="false">

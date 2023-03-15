@@ -1173,3 +1173,33 @@ footer a {
     }
 }
 
+/*_ProductBoxList.cshtml*/
+
+.ProductBoxListDescription > p {
+    margin-bottom: 0;
+    font-size: 11px;
+    color: #575757;
+    line-height: 1.5;
+}
+
+/*CategoryTemplate.ProductGirdOrLines*/
+
+.sub-heading {
+    color: black;
+    font-family: 'Replica Mono';
+    font-weight: 400;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    font-size: 30px !important;
+}
+
+.custom-content {
+    width: 85%;
+}
+
+@media(max-width: 945px) {
+
+    .custom-content {
+        width: 100% !important;
+    }
+}
