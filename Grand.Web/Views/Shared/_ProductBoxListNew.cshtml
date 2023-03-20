@@ -36,7 +36,7 @@
 
 @await Component.InvokeAsync("Widget", new { widgetZone = "productbox_list_before_content", additionalData = Model })
 
-<div class="product-box container desktopPackage align-items-start p-3 mx-0" 
+<div class="product-box container desktopPackage align-items-start justify-content-center p-3 mx-0" 
      style="max-width: 300px; line-height: 1; background-color: #FFF7E8;">
 
     <div class="animation lazyload" data-productid="@Model.Id">
@@ -214,7 +214,7 @@
     </div>
 </div>
 
-<div class="product-box container tabletPackage align-items-start p-3 mx-0"
+<div class="product-box container tabletPackage align-items-start justify-content-center p-3 mx-0"
      style="max-width: 300px; line-height: 1; background-color: #FFF7E8;">
 
     <div class="animation lazyload" data-productid="@Model.Id">
@@ -392,7 +392,7 @@
     </div>
 </div>
 
-<div class="product-box container mobilePackage align-items-start p-3 mx-0"
+<div class="product-box container mobilePackage align-items-start justify-content-center p-3 mx-0"
      style="max-width: 300px; line-height: 1; background-color: #FFF7E8;">
 
     <div class="animation lazyload" data-productid="@Model.Id">
