@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 using NUglify.Helpers;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Numeric;
@@ -229,6 +230,12 @@ namespace Grand.Web.Controllers
                 OrderNumber = order.OrderNumber,
                 OnePageCheckoutEnabled = _orderSettings.OnePageCheckoutEnabled
             };
+
+            if(order.PaymentMethodSystemName == "Payments.CashOnDelivery")
+            {
+               await GoToPaymentRedirectPageCash(order.Id);
+               return RedirectPermanent(_localizationService.GetResource("Platform.uploadpayment") + ViewBag.OrderId);
+            }
 
             return View(model);
         }
@@ -2143,6 +2150,59 @@ namespace Grand.Web.Controllers
             };
 
             return View("~/Views/PaymentRedirect/Redirect.cshtml", response);
+        }
+
+        public async Task<IActionResult> GoToPaymentRedirectPageCash(string id)
+        {
+            var httpConnectionFeature = HttpContext.Features.Get<IHttpConnectionFeature>();
+            var localIpAddress = httpConnectionFeature?.LocalIpAddress;
+            PostProcessPaymentRequest orders = new PostProcessPaymentRequest();
+            GrandnodeOrderCreateObject orderCreateObject = new GrandnodeOrderCreateObject();
+            var order = await _orderService.GetOrderById(id);
+
+            orderCreateObject.DateCreated = order.CreatedOnUtc;
+            orderCreateObject.UserReferenceId = order.CustomerId;
+            orderCreateObject.Subtotal = order.OrderSubtotalInclTax;
+            orderCreateObject.Discounts = order.OrderDiscount;
+            orderCreateObject.NetTotal = order.OrderTotal;
+            orderCreateObject.OrderId = order.OrderNumber.ToString();
+
+            orderCreateObject.Items = new List<GrandnodeOrderCreateObject.Item>();
+            foreach (var item in order.OrderItems)
+            {
+                Product prod = await _productService.GetProductById(item.ProductId);
+                orderCreateObject.Items.Add(new GrandnodeOrderCreateObject.Item
+                {
+                    ItemId = prod.Id,
+                    ItemName = prod.Name,
+                    Price = item.UnitPriceInclTax,
+                    Quantity = item.Quantity,
+                    Subtotal = item.Quantity * item.UnitPriceInclTax
+                });
+            }
+
+            Result result = new Result();
+            var url = "";
+            using (HttpClient httpClient = new HttpClient())
+            {
+                var data = JsonConvert.SerializeObject(orderCreateObject);
+                var requestContent = new StringContent(data, Encoding.UTF8, "application/json");
+                var httpResponse = await httpClient.PostAsync(_localizationService.GetResource("Platform.CreateOrderUrl"), requestContent);
+                result = JsonConvert.DeserializeObject<Result>(httpResponse.Content.ReadAsStringAsync().Result);
+                url = httpResponse.ToString();
+            }
+
+            if (result.IsSuccess)
+            {
+                ViewBag.OrderId = result.ResponseObject.ToString();
+                ViewBag.UserId = order.CustomerId.ToString();
+            }
+            else
+            {
+                return RedirectPermanent(_localizationService.GetResource("Platform.FailedOrder"));
+                //return View("~/Views/PaymentRedirect/Redirect.cshtml", result.ResponseObject.ToString());
+            }
+            return RedirectPermanent(_localizationService.GetResource("Platform.uploadpayment") + ViewBag.OrderId);
         }
 
         public string PaynamicsRemoveSpecialCharacter(string value)
