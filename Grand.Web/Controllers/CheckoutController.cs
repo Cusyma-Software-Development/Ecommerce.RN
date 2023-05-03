@@ -231,7 +231,7 @@ namespace Grand.Web.Controllers
                 OnePageCheckoutEnabled = _orderSettings.OnePageCheckoutEnabled
             };
 
-            if(order.PaymentMethodSystemName == "Payments.CashOnDelivery")
+            if(order.PaymentMethodSystemName == "Payments.PayInStore")
             {
                await GoToPaymentRedirectPageCash(order.Id);
                return RedirectPermanent(_localizationService.GetResource("Platform.uploadpayment") + ViewBag.OrderId);
