@@ -1760,6 +1760,13 @@ namespace Grand.Web.Controllers
                             redirect = string.Format("{0}checkout/OpcCompleteRedirectionPayment", _webHelper.GetStoreLocation())
                         });
                     }
+                    if(paymentMethod.PaymentMethodType == PaymentMethodType.Standard)
+                    {
+                        return Json(new
+                        {
+                            redirect = string.Format("{0}checkout/OpcCompleteRedirectionPayment", _webHelper.GetStoreLocation())
+                        });
+                    }
 
                     await _paymentService.PostProcessPayment(postProcessPaymentRequest);
                     //success
@@ -1809,8 +1816,8 @@ namespace Grand.Web.Controllers
                 var paymentMethod = _paymentService.LoadPaymentMethodBySystemName(order.PaymentMethodSystemName);
                 if (paymentMethod == null)
                     return RedirectToRoute("HomePage");
-                if (paymentMethod.PaymentMethodType != PaymentMethodType.Redirection)
-                    return RedirectToRoute("HomePage");
+                //if (paymentMethod.PaymentMethodType != PaymentMethodType.Redirection)
+                //    return RedirectToRoute("HomePage");
 
                 //ensure that order has been just placed
                 if ((DateTime.UtcNow - order.CreatedOnUtc).TotalMinutes > 3)
@@ -1819,10 +1826,23 @@ namespace Grand.Web.Controllers
 
                 //Redirection will not work on one page checkout page because it's AJAX request.
                 //That's why we process it here
-                var postProcessPaymentRequest = new PostProcessPaymentRequest {
-                    Order = order,
-                     RedirectURL = Url.Action("GoToPaymentRedirectPage", "Checkout", new { id = order.Id })
-                };
+                var postProcessPaymentRequest = new PostProcessPaymentRequest();
+                if (order.PaymentMethodSystemName == "Payments.PayInStore")
+                {
+                    postProcessPaymentRequest = new PostProcessPaymentRequest
+                    {
+                        Order = order,
+                        RedirectURL = Url.Action("GoToPaymentRedirectPageCash", "Checkout", new { id = order.Id })
+                    };
+                }
+                else
+                {
+                    postProcessPaymentRequest = new PostProcessPaymentRequest
+                    {
+                        Order = order,
+                        RedirectURL = Url.Action("GoToPaymentRedirectPage", "Checkout", new { id = order.Id })
+                    };
+                }
 
                 await _paymentService.PostProcessPayment(postProcessPaymentRequest);
 
